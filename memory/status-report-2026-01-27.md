@@ -50,9 +50,10 @@ If we need a full GUI later:
 
 ### Browser Automation
 - Chromium installed and works in headless mode ✅
+- Playwright installed with headless shell ✅
 - Clawdbot browser control server needs more config (not working yet)
-- **Workaround:** Can use Playwright or direct Chromium for now
-- Will troubleshoot browser tool integration later
+- **For now:** Will use Playwright for browser automation
+- Will troubleshoot Clawdbot browser tool integration later
 
 ## 📋 Ready To Do
 
@@ -62,5 +63,11 @@ Once Khrafts provides email/GitHub:
 3. Clone/init NYD repo
 4. Start coding!
 
+## 📦 Git Status
+- Made initial commit with all workspace files
+- Using temporary git identity (oded@localhost) until real email is set up
+- Ready to push to GitHub once account is created
+
 ---
 *Report generated: 2026-01-27 ~17:58 UTC*
+*Last updated: ~18:05 UTC*
