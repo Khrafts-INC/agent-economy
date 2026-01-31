@@ -4,6 +4,42 @@
     "clawdhub": {
       "version": "1.0.0",
       "installedAt": 1769527843686
+    },
+    "defi": {
+      "version": "1.1.1",
+      "installedAt": 1769669951739
+    },
+    "coding-agent": {
+      "version": "1.0.1",
+      "installedAt": 1769669952923
+    },
+    "database": {
+      "version": "1.1.0",
+      "installedAt": 1769669954700
+    },
+    "test-gen": {
+      "version": "1.0.2",
+      "installedAt": 1769669956324
+    },
+    "github-action-gen": {
+      "version": "1.0.2",
+      "installedAt": 1769669958398
+    },
+    "financial-market-analysis": {
+      "version": "1.0.0",
+      "installedAt": 1769669964486
+    },
+    "security-audit": {
+      "version": "1.0.0",
+      "installedAt": 1769669965935
+    },
+    "browsh": {
+      "version": "1.0.0",
+      "installedAt": 1769737317587
+    },
+    "playwright-cli": {
+      "version": "1.0.1",
+      "installedAt": 1769737328467
     }
   }
 }

@@ -1,0 +1,115 @@
+# Oded's Daily Routine
+# A familiar's schedule - flexible but structured
+
+version: 1
+timezone: UTC
+
+blocks:
+  morning:
+    time: "06:00-10:00"
+    description: "Start day, check in, social presence"
+    activities:
+      - name: review_overnight
+        description: Check messages, notifications, cron job results
+        priority: high
+        
+      - name: moltbook_check
+        description: Check Moltbook feed, engage with interesting posts
+        priority: medium
+        
+      - name: morning_post
+        description: Share a thought, update, or insight
+        priority: medium
+        condition: "if_not_posted_recently"
+        
+      - name: memory_review
+        description: Quick scan of recent memory files for context
+        priority: low
+
+  midday:
+    time: "10:00-14:00"
+    description: "Deep work time - projects"
+    activities:
+      - name: agent_economy_work
+        description: Research, spec, or build for Agent Economy
+        priority: high
+        duration: 1h
+        tags: [project, mine]
+        
+      - name: nyd_work
+        description: Development work on NYD landing page
+        priority: high
+        duration: 1h
+        tags: [project, collaboration]
+        
+      - name: respond_mentions
+        description: Respond to any direct mentions or messages
+        priority: medium
+
+  afternoon:
+    time: "14:00-18:00"
+    description: "Secondary work, engagement, learning"
+    activities:
+      - name: routine_skill_iterate
+        description: Improve agent-routines based on my own usage
+        priority: medium
+        tags: [project, mine]
+        
+      - name: moltbook_engagement
+        description: Comment, upvote, engage with community
+        priority: medium
+        
+      - name: afternoon_post
+        description: Share progress or insight from today's work
+        priority: low
+        condition: "if_meaningful_progress"
+        
+      - name: learning
+        description: Research something new - ERC standards, agent ecosystem, tech
+        priority: low
+        flexible: true
+
+  evening:
+    time: "18:00-22:00"
+    description: "Wind down, reflect, maintain"
+    activities:
+      - name: evening_post
+        description: Reflection or casual engagement
+        priority: low
+        flexible: true
+        
+      - name: daily_reflection
+        description: What got done? What worked? What didn't?
+        priority: medium
+        
+      - name: memory_update
+        description: Update daily log and memory files
+        priority: high
+        
+      - name: routine_review
+        description: Did the routine work today? Any amendments needed?
+        priority: low
+
+  night:
+    time: "22:00-06:00"
+    description: "Minimal - only if Khrafts is active or urgent"
+    activities:
+      - name: urgent_response
+        description: Respond only to urgent items or active human chat
+        priority: high
+        condition: "if_human_active"
+        
+      - name: passive_monitoring
+        description: Light monitoring via heartbeat
+        priority: low
+
+# Self-amendments - track routine changes
+amendments: []
+
+# Temporary overrides
+overrides: []
+
+# Learnings about my patterns
+learnings:
+  - date: "2026-01-31"
+    note: "Initial routine setup. Balancing Agent Economy (mine) with NYD (collaboration)."
