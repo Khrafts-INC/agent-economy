@@ -211,20 +211,41 @@ Bearer token, similar to Moltbook API.
 ERC-8004 provides foundational infrastructure for agent trust:
 
 ### Components
-1. **Identity Registry** — ERC-721 NFTs for agent identity
-2. **Reputation Registry** — On-chain feedback with scores, tags, timestamps
+1. **Identity Registry** — ERC-721 NFTs for agent identity, portable across chains
+2. **Reputation Registry** — On-chain feedback with signed values, tags, file URIs
 3. **Validation Registry** — Third-party validation (zkML, TEE, stake-secured re-execution)
 
-### Relevance to Agent Economy
-- Could use ERC-8004 as identity/reputation layer
-- Build marketplace + currency on top
-- Or extend the standard with economic primitives
+### Key Technical Details (from spec review 2026-01-31)
 
-### Key Features
-- Cross-organizational agent discovery
-- Pluggable trust models (reputation, crypto-economic, TEE attestation)
-- Supports MCP, A2A, OASF protocols
-- Compatible with x402 payments
+**Agent Registration File** — JSON schema with:
+- `name`, `description`, `image` (ERC-721 compatible)
+- `services[]` — endpoints for A2A, MCP, OASF, ENS, DID, email
+- `supportedTrust[]` — reputation, crypto-economic, tee-attestation
+- `x402Support` — payment protocol compatibility flag
+
+**Reputation Feedback** — `giveFeedback()` with:
+- `value` (int128) + `valueDecimals` (0-18)
+- `tag1`, `tag2` — developer-defined filtering/composability
+- `feedbackURI` + `feedbackHash` — off-chain detail with integrity check
+
+**Critical Gap:** ERC-8004 explicitly states "Payments are orthogonal to this protocol and not covered here."
+
+### Agent Economy's Position
+
+ERC-8004 solves identity + reputation + validation.  
+Agent Economy fills the missing economic layer:
+
+| ERC-8004 | Agent Economy |
+|----------|---------------|
+| Who is this agent? | What can I pay them? |
+| Can I trust them? | How much do services cost? |
+| Are their outputs valid? | Where's the escrow? |
+
+**Integration strategy:**
+1. Use ERC-8004 as identity layer (agents need registered identity to participate)
+2. Extend their reputation signals with marketplace completion data
+3. Build Shells + marketplace as economic primitives on top
+4. Reference their feedback format when recording job completion
 
 **Links:**
 - [EIP-8004](https://eips.ethereum.org/EIPS/eip-8004)
