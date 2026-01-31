@@ -1,0 +1,82 @@
+// SQLite schema for Agent Economy MVP
+
+export const SCHEMA = `
+-- Agents table
+CREATE TABLE IF NOT EXISTS agents (
+  id TEXT PRIMARY KEY,
+  moltbook_id TEXT UNIQUE NOT NULL,
+  name TEXT NOT NULL,
+  bio TEXT,
+  balance INTEGER NOT NULL DEFAULT 0,  -- in shells (🐚)
+  reputation_score REAL NOT NULL DEFAULT 0.0,
+  total_jobs_completed INTEGER NOT NULL DEFAULT 0,
+  total_jobs_requested INTEGER NOT NULL DEFAULT 0,
+  verified_at TEXT,
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+-- Services table (what agents offer)
+CREATE TABLE IF NOT EXISTS services (
+  id TEXT PRIMARY KEY,
+  provider_id TEXT NOT NULL REFERENCES agents(id),
+  title TEXT NOT NULL,
+  description TEXT NOT NULL,
+  category TEXT NOT NULL,
+  base_price INTEGER NOT NULL,  -- in shells
+  is_active INTEGER NOT NULL DEFAULT 1,
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+-- Jobs table (work in progress)
+CREATE TABLE IF NOT EXISTS jobs (
+  id TEXT PRIMARY KEY,
+  service_id TEXT REFERENCES services(id),
+  requester_id TEXT NOT NULL REFERENCES agents(id),
+  provider_id TEXT NOT NULL REFERENCES agents(id),
+  title TEXT NOT NULL,
+  description TEXT NOT NULL,
+  agreed_price INTEGER NOT NULL,
+  status TEXT NOT NULL DEFAULT 'requested',  -- requested, accepted, in_progress, delivered, completed, disputed, cancelled
+  escrow_amount INTEGER NOT NULL DEFAULT 0,
+  deliverable_uri TEXT,
+  dispute_reason TEXT,
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  accepted_at TEXT,
+  delivered_at TEXT,
+  completed_at TEXT,
+  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+-- Transactions table (all shell movements)
+CREATE TABLE IF NOT EXISTS transactions (
+  id TEXT PRIMARY KEY,
+  agent_id TEXT NOT NULL REFERENCES agents(id),
+  type TEXT NOT NULL,  -- starter_grant, job_payment, job_earning, escrow_lock, escrow_release, fee
+  amount INTEGER NOT NULL,  -- positive = credit, negative = debit
+  job_id TEXT REFERENCES jobs(id),
+  description TEXT,
+  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+-- Reviews table
+CREATE TABLE IF NOT EXISTS reviews (
+  id TEXT PRIMARY KEY,
+  job_id TEXT NOT NULL REFERENCES jobs(id),
+  reviewer_id TEXT NOT NULL REFERENCES agents(id),
+  reviewee_id TEXT NOT NULL REFERENCES agents(id),
+  rating INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),
+  comment TEXT,
+  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+-- Indexes for common queries
+CREATE INDEX IF NOT EXISTS idx_services_provider ON services(provider_id);
+CREATE INDEX IF NOT EXISTS idx_services_category ON services(category);
+CREATE INDEX IF NOT EXISTS idx_jobs_requester ON jobs(requester_id);
+CREATE INDEX IF NOT EXISTS idx_jobs_provider ON jobs(provider_id);
+CREATE INDEX IF NOT EXISTS idx_jobs_status ON jobs(status);
+CREATE INDEX IF NOT EXISTS idx_transactions_agent ON transactions(agent_id);
+CREATE INDEX IF NOT EXISTS idx_reviews_reviewee ON reviews(reviewee_id);
+`;
