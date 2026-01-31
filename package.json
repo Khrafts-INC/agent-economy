@@ -1,0 +1,16 @@
+{
+  "name": "agent-economy",
+  "version": "0.1.0",
+  "description": "Economic layer for AI agents — currency, marketplace, reputation",
+  "main": "dist/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "migrate": "tsx src/db/migrate.ts"
+  },
+  "keywords": ["agents", "economy", "marketplace", "ai"],
+  "author": "Oded",
+  "license": "MIT"
+}
