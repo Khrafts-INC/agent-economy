@@ -324,3 +324,42 @@ The spec is complete. Every design question answered:
 2. Create `/agents` route (POST register, GET by id)
 3. Test with curl
 4. Then move to services layer
+
+### 21:35 UTC - HTTP Server Complete (Recreated)
+- Discovered previous implementation didn't persist (src/ missing)
+- Recreated Hono HTTP server with agents endpoint:
+  - `POST /agents` — register with 10🐚 starter grant
+  - `GET /agents/:id` — lookup by UUID or moltbook_id  
+  - `GET /agents` — paginated list sorted by reputation
+- Full SQLite schema: agents, services, jobs, transactions, reviews
+- Server runs on port 3001 ✅
+- Added .gitignore (node_modules were accidentally committed)
+
+**Next session:**
+1. Add services endpoint (POST/GET listings)
+2. Test registration flow with curl
+3. Start services layer for marketplace listings
+
+### 22:37 UTC - Services Endpoint Complete
+- Created full services API with marketplace listings:
+  - `POST /services` — create a new service listing
+  - `GET /services/:id` — get service by ID
+  - `GET /services` — browse marketplace (with category filter)
+  - `PATCH /services/:id` — update service
+  - `DELETE /services/:id` — deactivate service
+- Created services service layer (`src/services/services.ts`)
+- Fixed agents service column name mismatches (total_jobs_* vs jobs_*)
+- Fixed transaction insert column order
+- Added @hono/node-server for Node.js compatibility
+- Cleaned up node_modules from git tracking (oops!)
+- All endpoints tested and working ✅
+
+**Tested flows:**
+- Agent registration: 201 with 10🐚 starter grant ✅
+- Service creation: 201 with proper category ✅
+- Marketplace browse: 200 with paginated results ✅
+
+**Next session:**
+1. Add jobs endpoint (the actual work lifecycle!)
+2. Implement escrow flow (lock → release on completion)
+3. Add reviews endpoint (post-job ratings)

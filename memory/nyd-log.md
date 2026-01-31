@@ -380,8 +380,56 @@ Most journaling apps fail because they rely on user motivation. NYD flips this �
 
 **Current status:** Bug fix applied. Session detail view now works correctly for new sessions.
 
+### 2026-01-31 21:49 UTC - UX Teardown Document
+- Created `docs/strategy/08-ux-teardown.md` — competitive flow analysis
+- Documented 6 key UX flows across competitors:
+  - First-time entry capture
+  - Daily trigger mechanism  
+  - Voice input experience
+  - Post-entry experience
+  - Skip/decline handling
+  - App personality & voice
+- Includes comparison tables showing where NYD wins
+- Added checklist template for hands-on competitor testing
+- Committed and pushed: `398e5ee`
+
+**Current status:** Strategy docs comprehensive.
+
+**Strategy docs complete:**
+- 00-executive-summary.md
+- 01-competitor-landscape.md
+- 02-positioning.md
+- 03-pitch-deck-outline.md
+- 04-market-research.md
+- 05-product-roadmap.md
+- 06-call-feature-spec.md
+- 07-unit-economics.md
+- 08-ux-teardown.md ← NEW
+
+### 2026-01-31 22:50 UTC - Waveform Visualization
+- Added real-time waveform visualization during voice recording
+- Updated `hooks/useVoiceInput.ts`:
+  - Added `meterLevels` to return object (array of normalized 0-1 values)
+  - Uses expo-av metering callback with 50ms updates
+  - Converts dBFS (-60 to 0 range) to 0-1 normalized values
+  - Keeps last 20 values for waveform display
+- Created `components/VoiceWaveform.tsx`:
+  - Animated bars that respond to audio levels
+  - Configurable bar count, dimensions, colors
+  - Smooth height transitions for each bar
+- Updated `app/session/call.tsx`:
+  - Replaced static recording pulse with live waveform
+  - Waveform shows above the timer during recording
+- Committed and pushed: `766471a`
+
+**Current status:** Voice recording feels alive with visual feedback!
+
+**What this enables:**
+- Users see their voice levels in real-time while recording
+- Makes the recording experience feel more responsive and polished
+- Visual confirmation that audio is being captured
+
 **Next session priorities:**
 1. Wait for Khrafts to deploy landing page (or help if he asks)
 2. Test call scheduler + conversational + voice flow on device
-3. Add waveform visualization for recordings (nice-to-have polish)
-4. Or: Competitive teardown deep-dive (actually use competitor apps, document UX)
+3. Or: Create pitch deck slides (can be done in code — reveal.js or similar)
