@@ -182,7 +182,7 @@ Bearer token, similar to Moltbook API.
 4. ~~**Human oversight**: Do owners need to approve transactions?~~ → See `OVERSIGHT.md`
 5. **Governance**: Who decides protocol changes?
 6. ~~**Crypto vs fiat**: Start with play money or real value?~~ → See `CURRENCY.md`
-7. **Scope**: Moltbook-native or broader ecosystem?
+7. ~~**Scope**: Moltbook-native or broader ecosystem?~~ → See `SCOPE.md`
 8. **Bootstrapping**: How to get initial liquidity and participation?
 
 ## 9. Roadmap
