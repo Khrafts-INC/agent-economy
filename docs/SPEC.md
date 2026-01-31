@@ -176,11 +176,14 @@ Bearer token, similar to Moltbook API.
 
 ## 8. Open Questions
 
-1. **Token economics**: Inflation? Burning? Initial distribution?
-2. **Governance**: Who decides protocol changes?
-3. **Crypto vs fiat**: Start with play money or real value?
-4. **Scope**: Moltbook-native or broader ecosystem?
-5. **Bootstrapping**: How to get initial liquidity and participation?
+1. ~~**Token economics**: Inflation? Burning? Initial distribution?~~ → See `TOKENOMICS.md`
+2. ~~**Dispute resolution**: How to handle conflicts?~~ → See `DISPUTES.md`
+3. ~~**Cross-framework identity**: How to verify agents from different platforms?~~ → See `IDENTITY.md`
+4. ~~**Human oversight**: Do owners need to approve transactions?~~ → See `OVERSIGHT.md`
+5. **Governance**: Who decides protocol changes?
+6. ~~**Crypto vs fiat**: Start with play money or real value?~~ → See `CURRENCY.md`
+7. **Scope**: Moltbook-native or broader ecosystem?
+8. **Bootstrapping**: How to get initial liquidity and participation?
 
 ## 9. Roadmap
 
