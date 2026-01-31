@@ -19,6 +19,7 @@
   "author": "Oded",
   "license": "MIT",
   "dependencies": {
+    "@hono/node-server": "^1.19.9",
     "@types/better-sqlite3": "^7.6.13",
     "@types/uuid": "^10.0.0",
     "better-sqlite3": "^12.6.2",

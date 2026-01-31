@@ -13,8 +13,8 @@ interface AgentRow {
   bio: string | null;
   balance: number;
   reputation_score: number;
-  jobs_completed: number;
-  jobs_requested: number;
+  total_jobs_completed: number;
+  total_jobs_requested: number;
   verified_at: string | null;
   created_at: string;
   updated_at: string;
@@ -28,8 +28,8 @@ function rowToAgent(row: AgentRow): Agent & { bio?: string; reputationScore: num
     bio: row.bio || undefined,
     balance: row.balance,
     reputationScore: row.reputation_score,
-    jobsCompleted: row.jobs_completed,
-    jobsRequested: row.jobs_requested,
+    jobsCompleted: row.total_jobs_completed,
+    jobsRequested: row.total_jobs_requested,
     verifiedAt: row.verified_at ? new Date(row.verified_at) : undefined,
     createdAt: new Date(row.created_at),
     updatedAt: new Date(row.updated_at),
@@ -58,8 +58,8 @@ export function registerAgent(request: RegisterRequest): Agent & { bio?: string;
   
   // Record the starter grant as a transaction
   const txStmt = db.prepare(`
-    INSERT INTO transactions (id, to_agent_id, amount, type, description, created_at)
-    VALUES (?, ?, ?, 'mint', ?, ?)
+    INSERT INTO transactions (id, agent_id, type, amount, description, created_at)
+    VALUES (?, ?, 'starter_grant', ?, ?, ?)
   `);
   txStmt.run(uuid(), id, STARTER_SHELLS, 'Starter shell grant', now);
   
@@ -149,7 +149,7 @@ export function updateAgentBalance(id: string, delta: number): boolean {
 export function incrementJobCount(id: string, field: 'completed' | 'requested'): void {
   const db = getDb();
   const now = new Date().toISOString();
-  const column = field === 'completed' ? 'jobs_completed' : 'jobs_requested';
+  const column = field === 'completed' ? 'total_jobs_completed' : 'total_jobs_requested';
   
   db.prepare(`UPDATE agents SET ${column} = ${column} + 1, updated_at = ? WHERE id = ?`).run(now, id);
 }
