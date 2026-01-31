@@ -303,8 +303,85 @@ Most journaling apps fail because they rely on user motivation. NYD flips this �
 - Gentle persistence respects user's time but doesn't give up immediately
 - All local - no backend dependency for Phase 1
 
+### 2026-01-31 17:37 UTC - Conversational Session Flow
+- Created `lib/conversationFlow.ts` with conversation configurations:
+  - **Morning calls:** Sleep check → How feeling → What would make today good
+  - **Evening calls:** Day reflection → Highlights → What's on mind → Tomorrow prep
+  - **Manual calls:** Quick check-in → What's on mind
+  - Warm greetings, closing messages, transition phrases
+- Created `app/session/call.tsx` — the heart of NYD:
+  - Multi-question conversational flow (3-4 questions)
+  - Animated transitions between questions (fade in/out)
+  - Progress dots showing where you are
+  - Skip option for optional questions
+  - Greeting screen: "Good morning. How did you sleep?" → "I'm here"
+  - Closing screen: warm message → "End call"
+  - All responses saved together as formatted text
+- Updated `incoming.tsx` to route to conversational flow instead of single-prompt session
+- Committed and pushed: `b69b296`
+
+**Current status:** Call experience feels like a conversation!
+
+**What this enables:**
+- Calls feel like talking to a friend, not filling out a form
+- Natural question progression with animated transitions
+- Different question sets for morning/evening/manual calls
+- Warm greetings and closings make it feel human
+
+### 2026-01-31 18:41 UTC - Voice Input for Calls
+- Created `hooks/useVoiceInput.ts`:
+  - Full recording lifecycle: start, stop, cancel
+  - Real-time duration tracking
+  - Permission handling
+  - Error states
+  - Cleanup on unmount/cancel
+- Created `hooks/index.ts` for clean exports
+- Updated `app/session/call.tsx` with voice input:
+  - Toggle between text/voice modes (tap mic icon or "Type"/"Voice" button)
+  - Voice recording UI: big record button, recording indicator with time, stop button
+  - Completion state shows duration and re-record option
+  - Haptic feedback on record start/stop
+  - Voice responses stored with URI + duration
+  - Text display shows "🎤 Voice recording (X:XX)" for voice responses
+- Committed and pushed: `7fcd511`
+
+**Current status:** Call experience supports both text AND voice input!
+
+**What this enables:**
+- Users can speak their responses naturally (core to the "call" metaphor)
+- Recordings stored locally for future transcription (Phase 2)
+- Smooth toggle between input modes per-question
+- UI feels native: big record button, real-time duration, haptics
+
+### 2026-01-31 19:45 UTC - Voice Recording Playback
+- Added playback controls for voice recordings in call.tsx:
+  - Play/pause button (replaces static checkmark)
+  - Real-time position/duration display while playing
+  - Progress bar showing playback position
+  - Playback auto-stops and resets when finished
+  - Proper cleanup on mode toggle, re-record, question change
+  - Haptic feedback on play start
+- Fixed ESLint issue (NodeJS.Timeout → ReturnType<typeof setInterval>)
+- Committed and pushed: `db0e425`
+
+**Current status:** Voice experience complete! Users can record → play back → re-record → submit.
+
+**What this enables:**
+- Users can review their voice recordings before submitting
+- Natural UX: tap to play, tap again to pause
+- Progress visualization shows where you are in the recording
+- Confidence before hitting "next" — no wondering if it recorded right
+
+### 2026-01-31 20:47 UTC - Session Detail Bug Fix
+- Found bug: In demo mode, `fetchSession` only checked mockSessions, not live sessions array
+- This meant newly completed call sessions weren't findable in detail view
+- Fixed: Now checks live `sessions` array first, falls back to mock data
+- Committed and pushed: `ff76956`
+
+**Current status:** Bug fix applied. Session detail view now works correctly for new sessions.
+
 **Next session priorities:**
 1. Wait for Khrafts to deploy landing page (or help if he asks)
-2. Test call scheduler on device (verify notifications fire correctly)
-3. Improve session flow (multi-question conversation, not just single prompt)
+2. Test call scheduler + conversational + voice flow on device
+3. Add waveform visualization for recordings (nice-to-have polish)
 4. Or: Competitive teardown deep-dive (actually use competitor apps, document UX)
