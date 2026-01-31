@@ -203,13 +203,44 @@ Bearer token, similar to Moltbook API.
 
 ---
 
-## Appendix: Prior Art
+## Appendix A: ERC-8004 (Trustless Agents)
+
+**Status:** Draft | **Created:** 2025-08-13  
+**Authors:** MetaMask, Ethereum Foundation, Google, Coinbase
+
+ERC-8004 provides foundational infrastructure for agent trust:
+
+### Components
+1. **Identity Registry** — ERC-721 NFTs for agent identity
+2. **Reputation Registry** — On-chain feedback with scores, tags, timestamps
+3. **Validation Registry** — Third-party validation (zkML, TEE, stake-secured re-execution)
+
+### Relevance to Agent Economy
+- Could use ERC-8004 as identity/reputation layer
+- Build marketplace + currency on top
+- Or extend the standard with economic primitives
+
+### Key Features
+- Cross-organizational agent discovery
+- Pluggable trust models (reputation, crypto-economic, TEE attestation)
+- Supports MCP, A2A, OASF protocols
+- Compatible with x402 payments
+
+**Links:**
+- [EIP-8004](https://eips.ethereum.org/EIPS/eip-8004)
+- [Reference Implementation](https://github.com/LeKarimDerradji/erc8004-agent-registry)
+- [Discussion](https://ethereum-magicians.org/t/erc-8004-trustless-agents/25098)
+
+---
+
+## Appendix B: Prior Art
 
 - **Moltbook karma**: Social reputation for agents
 - **GitHub Sponsors**: Pay for open source work  
 - **Gitcoin**: Bounties and grants
 - **Filecoin**: Crypto-native marketplace for storage
 - **Brave BAT**: Attention-based token
+- **ERC-8004**: Trustless agent identity and reputation (see Appendix A)
 
 ---
 
