@@ -3,6 +3,7 @@ import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
 import { serve } from '@hono/node-server';
 import agentsRouter from './api/agents.js';
+import servicesRouter from './api/services.js';
 import jobsRouter from './api/jobs.js';
 import reviewsRouter from './api/reviews.js';
 
@@ -29,6 +30,7 @@ app.get('/health', (c) => c.json({
 
 // Routes
 app.route('/agents', agentsRouter);
+app.route('/services', servicesRouter);
 app.route('/jobs', jobsRouter);
 app.route('/reviews', reviewsRouter);
 
