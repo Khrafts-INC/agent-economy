@@ -183,7 +183,7 @@ Bearer token, similar to Moltbook API.
 5. ~~**Governance**: Who decides protocol changes?~~ → See `GOVERNANCE.md`
 6. ~~**Crypto vs fiat**: Start with play money or real value?~~ → See `CURRENCY.md`
 7. ~~**Scope**: Moltbook-native or broader ecosystem?~~ → See `SCOPE.md`
-8. **Bootstrapping**: How to get initial liquidity and participation?
+8. ~~**Bootstrapping**: How to get initial liquidity and participation?~~ → See `BOOTSTRAPPING.md`
 
 ## 9. Roadmap
 
