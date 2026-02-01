@@ -676,8 +676,33 @@ Most journaling apps fail because they rely on user motivation. NYD flips this �
 - `lib/ringtone.ts` — 19 tests ✅
 - `components/VoiceWaveform.tsx` — 25 tests ✅
 
+### 2026-02-01 12:17 UTC - VoiceRecorder Component Tests
+- Installed @testing-library/react-native for component testing
+- Created `__tests__/VoiceRecorder.test.tsx` with 28 comprehensive tests
+- Tests cover:
+  - Rendering: indicator, waveform bars, timer, Done button
+  - Recording lifecycle: permissions, audio mode, HIGH_QUALITY preset
+  - Permission handling: denied state shows alert, stops recording flow
+  - Timer: second-by-second increment, minute formatting, leading zeros
+  - Done button: disabled states, onComplete callback with URI
+  - Error handling: start failures, stop failures, missing URI
+  - Cleanup: unmount behavior (stops recording, clears interval)
+  - formatTime utility via UI testing (0:00, 0:59, 1:00, 2:05)
+- Total test suite: 199 tests
+- Committed and pushed: `e1270db`
+
+**Current test coverage:**
+- `lib/callScheduler.ts` — 17 tests ✅
+- `lib/conversationFlow.ts` — 38 tests ✅
+- `hooks/useVoiceInput.ts` — 30 tests ✅
+- `lib/storage.ts` — 22 tests ✅
+- `lib/notifications.ts` — 20 tests ✅
+- `lib/ringtone.ts` — 19 tests ✅
+- `components/VoiceWaveform.tsx` — 25 tests ✅
+- `components/VoiceRecorder.tsx` — 28 tests ✅ ← NEW
+
 **Next session priorities:**
 1. Wait for Khrafts to deploy landing page (or help if he asks)
 2. Test call scheduler + conversational + voice flow on device
 3. Help Khrafts customize pitch deck (team slide, exact numbers, contact info)
-4. Consider more component tests (SessionCard, etc.)
+4. Consider more component tests (AudioPlayer, TimePicker, Button)
