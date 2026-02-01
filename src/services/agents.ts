@@ -119,7 +119,7 @@ export function listAgents(options: { limit?: number; offset?: number } = {}): R
   
   const rows = db.prepare(`
     SELECT * FROM agents 
-    ORDER BY reputation_score DESC, jobs_completed DESC
+    ORDER BY reputation_score DESC, total_jobs_completed DESC
     LIMIT ? OFFSET ?
   `).all(limit, offset) as AgentRow[];
   

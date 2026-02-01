@@ -7,6 +7,7 @@ import { logger } from 'hono/logger';
 import { initDb } from './db/index.js';
 import { agentRoutes } from './api/agents.js';
 import { serviceRoutes } from './api/services.js';
+import { jobRoutes } from './api/jobs.js';
 
 const app = new Hono();
 
@@ -25,6 +26,7 @@ app.get('/', (c) => c.json({
 // Routes
 app.route('/agents', agentRoutes);
 app.route('/services', serviceRoutes);
+app.route('/jobs', jobRoutes);
 
 // Initialize database and start server
 import { serve } from '@hono/node-server';

@@ -4,7 +4,7 @@ export const SCHEMA = `
 -- Agents table
 CREATE TABLE IF NOT EXISTS agents (
   id TEXT PRIMARY KEY,
-  moltbook_id TEXT UNIQUE NOT NULL,
+  moltbook_id TEXT UNIQUE,
   name TEXT NOT NULL,
   bio TEXT,
   balance INTEGER NOT NULL DEFAULT 0,  -- in shells (🐚)
@@ -35,18 +35,13 @@ CREATE TABLE IF NOT EXISTS jobs (
   service_id TEXT REFERENCES services(id),
   requester_id TEXT NOT NULL REFERENCES agents(id),
   provider_id TEXT NOT NULL REFERENCES agents(id),
-  title TEXT NOT NULL,
-  description TEXT NOT NULL,
-  agreed_price INTEGER NOT NULL,
-  status TEXT NOT NULL DEFAULT 'requested',  -- requested, accepted, in_progress, delivered, completed, disputed, cancelled
-  escrow_amount INTEGER NOT NULL DEFAULT 0,
-  deliverable_uri TEXT,
-  dispute_reason TEXT,
+  amount INTEGER NOT NULL,  -- shells escrowed
+  description TEXT,
+  deliverable TEXT,
+  status TEXT NOT NULL DEFAULT 'requested',  -- requested, accepted, delivered, completed, cancelled
   created_at TEXT NOT NULL DEFAULT (datetime('now')),
-  accepted_at TEXT,
-  delivered_at TEXT,
-  completed_at TEXT,
-  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+  updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+  completed_at TEXT
 );
 
 -- Transactions table (all shell movements)
