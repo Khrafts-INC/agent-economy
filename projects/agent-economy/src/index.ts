@@ -1,6 +1,7 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
+import { serve } from '@hono/node-server';
 import agentsRouter from './api/agents.js';
 import jobsRouter from './api/jobs.js';
 import reviewsRouter from './api/reviews.js';
@@ -23,11 +24,20 @@ app.route('/agents', agentsRouter);
 app.route('/jobs', jobsRouter);
 app.route('/reviews', reviewsRouter);
 
-// Start server
-const port = process.env.PORT || 3001;
-console.log(`🐚 Agent Economy API running on http://localhost:${port}`);
+// Start server with Node.js
+const port = Number(process.env.PORT) || 3001;
+console.log(`🐚 Agent Economy API starting on http://localhost:${port}...`);
 
-export default {
-  port,
+const server = serve({
   fetch: app.fetch,
-};
+  port,
+});
+
+console.log(`🐚 Server listening on http://localhost:${port}`);
+
+// Keep process alive
+process.on('SIGINT', () => {
+  console.log('\n🐚 Shutting down...');
+  server.close();
+  process.exit(0);
+});

@@ -459,7 +459,142 @@ Most journaling apps fail because they rely on user motivation. NYD flips this �
 - Mobile app: core features working ✅
 - Pitch deck: presentable ✅
 
+### 2026-02-01 01:42 UTC - Beta Launch Playbook
+- Created `docs/strategy/09-beta-launch-playbook.md` in nyd-mobile
+- Comprehensive guide for going from "MVP ready" to "real users":
+  - Beta philosophy (small + engaged > large + passive)
+  - Pre-launch checklist (technical, content, ops readiness)
+  - User recruitment strategy (3 tiers: warm network → communities → waitlist)
+  - Onboarding scripts and check-in templates
+  - Metrics to track (answer rate, D1/D7 retention, voice vs text)
+  - Feedback collection methods (in-app, external, the magic question)
+  - Common pitfalls (loud users, silent churn, feature creep)
+  - 8-week timeline suggestion
+  - Success criteria (what you need before public launch)
+- Committed and pushed: `dd6514c`
+
+**Current status:** Ready for beta launch!
+
+**Strategy docs complete:**
+- 00-executive-summary.md
+- 01-competitor-landscape.md
+- 02-positioning.md
+- 03-pitch-deck-outline.md
+- 04-market-research.md
+- 05-product-roadmap.md
+- 06-call-feature-spec.md
+- 07-unit-economics.md
+- 08-ux-teardown.md
+- 09-beta-launch-playbook.md ← NEW
+
+### 2026-02-01 02:47 UTC - App Store Optimization Guide
+- Created `docs/strategy/10-app-store-optimization.md` in nyd-mobile
+- Complete ASO package for launch:
+  - App name options and character counts
+  - Taglines for App Store (30 char) and Play Store (80 char)
+  - Full descriptions for both stores (different lengths, same message)
+  - Keyword strategy (primary, secondary, long-tail, competitor)
+  - Screenshot strategy (6 screens with captions)
+  - Feature graphic concept
+  - App Preview video storyboard (15-30s)
+  - Category selection rationale
+  - Localization priority phases
+  - Rating & review strategy with in-app prompt timing
+  - Competitor ASO analysis (Day One, Reflectly, Rosebud)
+  - Launch day checklist
+  - Post-launch ASO maintenance schedule
+- Committed and pushed: `4a0fa23`
+
+**Current status:** Ready for store submission when app is built!
+
+**Strategy docs complete:**
+- 00-executive-summary.md
+- 01-competitor-landscape.md
+- 02-positioning.md
+- 03-pitch-deck-outline.md
+- 04-market-research.md
+- 05-product-roadmap.md
+- 06-call-feature-spec.md
+- 07-unit-economics.md
+- 08-ux-teardown.md
+- 09-beta-launch-playbook.md
+- 10-app-store-optimization.md ← NEW
+
+### 2026-02-01 03:49 UTC - Comprehensive README
+- Created `README.md` for nyd-mobile repository
+- Documents the full project:
+  - Core concept explanation ("the app that calls you")
+  - Current feature status table
+  - Quick start commands
+  - Full project structure breakdown
+  - How the call works (step-by-step flow)
+  - Key files reference
+  - Links to all documentation (strategy, architecture, pitch deck)
+  - Development phases overview
+  - Tech stack summary
+- Committed and pushed: `b326b2a`
+
+**Current status:** Project properly documented for collaborators.
+
+### 2026-02-01 04:50 UTC - Contributing Guide
+- Created `CONTRIBUTING.md` for nyd-mobile repo
+- Comprehensive guide for new collaborators:
+  - Quick start setup instructions
+  - Project structure explanation
+  - Branch naming and commit conventions
+  - Code style guidelines (TypeScript, React components, file naming)
+  - Key concepts (call metaphor, session types, voice input)
+  - Local development tips (hot reload, emulator issues, notifications)
+  - The vision statement
+- Committed and pushed: `bd9614a`
+
+**Current status:** Project fully documented for collaboration.
+
+### 2026-02-01 05:57 UTC - Test Infrastructure Setup
+- Installed Jest testing dependencies (jest, jest-expo, react-test-renderer)
+- Created `jest.config.js` with coverage thresholds (50% minimum)
+- Created `jest.setup.js` with mocks for expo modules:
+  - expo-notifications (schedule, cancel, permissions)
+  - expo-haptics (feedback)
+  - expo-av (audio recording/playback)
+- Created `__tests__/callScheduler.test.ts` with 17 comprehensive tests:
+  - scheduleAllCalls: scheduling, storage, notification calls
+  - cancelAllCalls: cancellation and cleanup
+  - recordCallAnswered: timestamp storage, declined count reset
+  - recordCallDeclined: count increment, gentle reminder logic
+  - getScheduledCalls: retrieval and error handling
+  - rescheduleCallsIfNeeded: conditional rescheduling
+  - setupNotificationCategories: Answer/Snooze actions
+- Updated ESLint config to recognize Jest globals
+- Added npm scripts: `test`, `test:watch`, `test:coverage`
+- All 17 tests passing
+- Committed and pushed: `9d6c108`
+
+**Current status:** Test infrastructure ready!
+- Jest configured and working
+- First test suite covers the core call scheduler
+- Coverage collection enabled
+- Ready to add more tests as development continues
+
+### 2026-02-01 06:56 UTC - Conversation Flow Tests
+- Created `__tests__/conversationFlow.test.ts` with 38 comprehensive tests
+- Tests cover:
+  - getConversationConfig: returns correct config for each call type
+  - Config structure validation for all types (greeting, questions, closings)
+  - Question field validation (id, text, skippable)
+  - Core UX test: feeling question is always first and non-skippable
+  - Question counts per call type (morning: 3, evening: 4, manual: 2)
+  - Random functions (getRandomClosing, getFollowUpPrompt, getTransitionPhrase)
+  - Tone validation: closings feel warm, prompts feel human (not robotic)
+- Total test suite: 55 tests (17 callScheduler + 38 conversationFlow)
+- Committed and pushed: `514e3dd`
+
+**Current test coverage:**
+- `lib/callScheduler.ts` — 17 tests ✅
+- `lib/conversationFlow.ts` — 38 tests ✅
+
 **Next session priorities:**
 1. Wait for Khrafts to deploy landing page (or help if he asks)
 2. Test call scheduler + conversational + voice flow on device
 3. Help Khrafts customize pitch deck (team slide, exact numbers, contact info)
+4. Add more test coverage (hooks/useVoiceInput, stores)

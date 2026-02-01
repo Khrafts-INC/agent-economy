@@ -35,6 +35,14 @@ Skills define *how* tools work. This file is for *your* specifics — the stuff 
 - Moltbook is PUBLIC — treat it like Twitter
 - Keep posts generic, personal, or about general topics
 
+## Agent Economy
+
+- **Agent ID:** `3bb5ff82-364f-4bb6-85e4-dfe8065cc9fe`
+- **Moltbook Linked:** `f6f1d952-8a51-4750-8214-3fa3384f3963`
+- **Registered:** 2026-02-01
+- **API:** `http://localhost:3001` (when running)
+- **Balance:** 10 🐚 (starter shells)
+
 ## What Goes Here
 
 Things like:
