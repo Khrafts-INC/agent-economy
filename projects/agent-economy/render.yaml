@@ -1,0 +1,19 @@
+# Render Blueprint for Agent Economy API
+# Deploy via: render.com dashboard or `render blueprint apply`
+
+services:
+  - type: web
+    name: agent-economy-api
+    runtime: node
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3001
+    healthCheckPath: /health
+    disk:
+      name: data
+      mountPath: /data
+      sizeGB: 1

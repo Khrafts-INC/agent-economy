@@ -4,8 +4,13 @@ import { dirname, join } from 'path';
 import { mkdirSync, existsSync } from 'fs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const dataDir = join(__dirname, '../../data');
-const dbPath = join(dataDir, 'economy.db');
+
+// Support DATABASE_PATH env for production deployment
+const dbPathFromEnv = process.env.DATABASE_PATH;
+const dataDir = dbPathFromEnv 
+  ? dirname(dbPathFromEnv)
+  : join(__dirname, '../../data');
+const dbPath = dbPathFromEnv || join(dataDir, 'economy.db');
 
 let db: Database.Database | null = null;
 
