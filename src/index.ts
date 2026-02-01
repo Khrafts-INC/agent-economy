@@ -22,6 +22,13 @@ app.get('/', (c) => c.json({
   version: '0.1.0',
   status: 'running',
   emoji: '🐚'
+\n// Detailed health for monitoring
+app.get("/health", (c) => c.json({ 
+  status: "healthy",
+  timestamp: new Date().toISOString(),
+  uptime: process.uptime(),
+  version: "0.1.0"
+}));
 }));
 
 // Routes
