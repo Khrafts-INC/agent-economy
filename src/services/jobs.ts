@@ -3,6 +3,7 @@
 import { getDb } from '../db/index.js';
 import { v4 as uuid } from 'uuid';
 import { updateAgentBalance, incrementJobCount, getAgentById } from './agents.js';
+import { notifyJobStatusChange } from './webhooks.js';
 
 const PLATFORM_FEE = 0.05; // 5% fee to Tide Pool
 
@@ -82,7 +83,12 @@ export function createJob(request: {
 
   incrementJobCount(request.requesterId, 'requested');
 
-  return rowToJob(db.prepare('SELECT * FROM jobs WHERE id = ?').get(id) as JobRow);
+  const job = rowToJob(db.prepare('SELECT * FROM jobs WHERE id = ?').get(id) as JobRow);
+  
+  // Notify provider they have a new job request
+  notifyJobStatusChange(job, 'job.requested');
+
+  return job;
 }
 
 export function getJobById(id: string) {
@@ -100,7 +106,9 @@ export function acceptJob(id: string) {
   if (job.status !== 'requested') throw new Error('Job cannot be accepted');
 
   db.prepare('UPDATE jobs SET status = ?, updated_at = ? WHERE id = ?').run('accepted', now, id);
-  return getJobById(id);
+  const updatedJob = getJobById(id)!;
+  notifyJobStatusChange(updatedJob, 'job.accepted');
+  return updatedJob;
 }
 
 export function deliverJob(id: string, deliverable?: string) {
@@ -113,7 +121,9 @@ export function deliverJob(id: string, deliverable?: string) {
 
   db.prepare('UPDATE jobs SET status = ?, deliverable = ?, updated_at = ? WHERE id = ?')
     .run('delivered', deliverable || null, now, id);
-  return getJobById(id);
+  const updatedJob = getJobById(id)!;
+  notifyJobStatusChange(updatedJob, 'job.delivered');
+  return updatedJob;
 }
 
 export function completeJob(id: string) {
@@ -147,7 +157,9 @@ export function completeJob(id: string) {
   db.prepare('UPDATE jobs SET status = ?, completed_at = ?, updated_at = ? WHERE id = ?')
     .run('completed', now, now, id);
 
-  return getJobById(id);
+  const updatedJob = getJobById(id)!;
+  notifyJobStatusChange(updatedJob, 'job.completed');
+  return updatedJob;
 }
 
 export function cancelJob(id: string) {
@@ -167,7 +179,9 @@ export function cancelJob(id: string) {
   `).run(uuid(), job.requesterId, job.amount, `Refund for cancelled job`, now);
 
   db.prepare('UPDATE jobs SET status = ?, updated_at = ? WHERE id = ?').run('cancelled', now, id);
-  return getJobById(id);
+  const updatedJob = getJobById(id)!;
+  notifyJobStatusChange(updatedJob, 'job.cancelled');
+  return updatedJob;
 }
 
 export function listJobs(filters: { requesterId?: string; providerId?: string; status?: string }) {

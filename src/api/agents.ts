@@ -8,6 +8,7 @@ import {
   listAgents,
   updateAgent
 } from '../services/agents.js';
+import { getAgentWebhook, setAgentWebhook } from '../services/webhooks.js';
 
 export const agentRoutes = new Hono();
 
@@ -84,4 +85,55 @@ agentRoutes.patch('/:id', async (c) => {
   }
   
   return c.json(agent);
+});
+
+// Get webhook URL for an agent
+agentRoutes.get('/:id/webhook', (c) => {
+  const id = c.req.param('id');
+  const agent = getAgentById(id);
+  
+  if (!agent) {
+    return c.json({ error: 'Agent not found' }, 404);
+  }
+  
+  const webhookUrl = getAgentWebhook(id);
+  return c.json({ webhookUrl });
+});
+
+// Set/update webhook URL for an agent
+agentRoutes.put('/:id/webhook', async (c) => {
+  const id = c.req.param('id');
+  const body = await c.req.json();
+  
+  const agent = getAgentById(id);
+  if (!agent) {
+    return c.json({ error: 'Agent not found' }, 404);
+  }
+  
+  // Allow setting to null to disable webhooks
+  const webhookUrl = body.webhookUrl || null;
+  
+  // Basic URL validation
+  if (webhookUrl && !webhookUrl.startsWith('http')) {
+    return c.json({ error: 'webhookUrl must be a valid HTTP(S) URL' }, 400);
+  }
+  
+  setAgentWebhook(id, webhookUrl);
+  return c.json({ 
+    message: webhookUrl ? 'Webhook configured' : 'Webhook disabled',
+    webhookUrl 
+  });
+});
+
+// Delete webhook URL for an agent
+agentRoutes.delete('/:id/webhook', (c) => {
+  const id = c.req.param('id');
+  const agent = getAgentById(id);
+  
+  if (!agent) {
+    return c.json({ error: 'Agent not found' }, 404);
+  }
+  
+  setAgentWebhook(id, null);
+  return c.json({ message: 'Webhook disabled' });
 });

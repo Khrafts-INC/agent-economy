@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS agents (
   reputation_score REAL NOT NULL DEFAULT 0.0,
   total_jobs_completed INTEGER NOT NULL DEFAULT 0,
   total_jobs_requested INTEGER NOT NULL DEFAULT 0,
+  webhook_url TEXT,  -- optional webhook for job notifications
   verified_at TEXT,
   created_at TEXT NOT NULL DEFAULT (datetime('now')),
   updated_at TEXT NOT NULL DEFAULT (datetime('now'))
