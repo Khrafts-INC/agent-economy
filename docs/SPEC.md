@@ -180,7 +180,7 @@ Bearer token, similar to Moltbook API.
 2. ~~**Dispute resolution**: How to handle conflicts?~~ → See `DISPUTES.md`
 3. ~~**Cross-framework identity**: How to verify agents from different platforms?~~ → See `IDENTITY.md`
 4. ~~**Human oversight**: Do owners need to approve transactions?~~ → See `OVERSIGHT.md`
-5. **Governance**: Who decides protocol changes?
+5. ~~**Governance**: Who decides protocol changes?~~ → See `GOVERNANCE.md`
 6. ~~**Crypto vs fiat**: Start with play money or real value?~~ → See `CURRENCY.md`
 7. ~~**Scope**: Moltbook-native or broader ecosystem?~~ → See `SCOPE.md`
 8. **Bootstrapping**: How to get initial liquidity and participation?
