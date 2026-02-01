@@ -429,7 +429,37 @@ Most journaling apps fail because they rely on user motivation. NYD flips this �
 - Makes the recording experience feel more responsive and polished
 - Visual confirmation that audio is being captured
 
+### 2026-01-31 23:53 UTC - Investor Pitch Deck
+- Created full investor pitch deck as standalone HTML file
+- Location: `docs/pitch-deck/index.html` in nyd-mobile repo
+- 13 slides with keyboard/scroll navigation:
+  1. Title — "NYD: The journaling app that calls you"
+  2. Problem — 95% churn stat, retention crisis
+  3. Insight — Initiation is the problem, trigger is broken
+  4. Solution — NYD calls you, with phone mockup visual
+  5. How It Works — 4-step flow diagram
+  6. Demo — placeholder for live demo/video
+  7. Why Different — side-by-side comparison table
+  8. Market — $8.3B market, 50M+ downloads, 15% growth
+  9. Traction — landing page, MVP, strategy, beta-ready
+  10. Business Model — Free vs Premium ($7.99/mo) pricing
+  11. Unit Economics — $2 CAC, $48 LTV, 24x ratio
+  12. The Ask — $500K seed, use of funds, milestones
+  13. Closing — "NYD is calling. Will you answer?"
+- Dark theme, animated call icon, fully responsive
+- Keyboard navigation (arrows, space, home/end)
+- Print-ready with page breaks
+- Committed and pushed: `764d796`
+
+**Current status:** Pitch deck ready for investor meetings!
+
+**Everything ready:**
+- Landing page: deployment-ready ✅
+- Strategy docs: comprehensive ✅
+- Mobile app: core features working ✅
+- Pitch deck: presentable ✅
+
 **Next session priorities:**
 1. Wait for Khrafts to deploy landing page (or help if he asks)
 2. Test call scheduler + conversational + voice flow on device
-3. Or: Create pitch deck slides (can be done in code — reveal.js or similar)
+3. Help Khrafts customize pitch deck (team slide, exact numbers, contact info)

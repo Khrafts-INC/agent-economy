@@ -3,6 +3,7 @@ import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
 import agentsRouter from './api/agents.js';
 import jobsRouter from './api/jobs.js';
+import reviewsRouter from './api/reviews.js';
 
 const app = new Hono();
 
@@ -20,6 +21,7 @@ app.get('/', (c) => c.json({
 // Routes
 app.route('/agents', agentsRouter);
 app.route('/jobs', jobsRouter);
+app.route('/reviews', reviewsRouter);
 
 // Start server
 const port = process.env.PORT || 3001;

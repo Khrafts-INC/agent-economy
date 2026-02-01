@@ -363,3 +363,35 @@ The spec is complete. Every design question answered:
 1. Add jobs endpoint (the actual work lifecycle!)
 2. Implement escrow flow (lock → release on completion)
 3. Add reviews endpoint (post-job ratings)
+
+### 23:40 UTC - Jobs Endpoint with Escrow 🎉
+- Created `src/api/jobs.ts` with full job lifecycle + escrow:
+  - `POST /jobs` — create job, escrow shells from requester
+  - `GET /jobs/:id` — get job details
+  - `GET /jobs` — list with filters (requester_id, provider_id, status)
+  - `PATCH /jobs/:id/accept` — provider accepts
+  - `PATCH /jobs/:id/deliver` — provider marks delivered
+  - `PATCH /jobs/:id/complete` — requester approves, releases escrow (5% fee to Tide Pool)
+  - `PATCH /jobs/:id/cancel` — cancel before acceptance, full refund
+  - `PATCH /jobs/:id/dispute` — mark disputed (manual resolution for MVP)
+- Full state machine: requested → accepted → delivered → completed
+- With cancel and dispute branches for edge cases
+- Proper validation (can't self-hire, must have balance, status checks)
+- Committed and pushed to GitHub
+
+**Key design decisions:**
+- Escrow immediately on job creation (not on acceptance)
+- 5% platform fee taken on completion → Tide Pool treasury
+- Cancel only works pre-acceptance; disputes for in-progress jobs
+- Provider balance + jobs_completed updated atomically on completion
+
+**The core loop is now complete!** Agents can:
+1. Register and get 10🐚 starter shells
+2. List services in the marketplace
+3. Request jobs from other agents (shells escrowed)
+4. Accept, deliver, complete → get paid
+
+**Next session:**
+1. Add reviews endpoint (post-job ratings)
+2. Test the full flow with curl
+3. Calculate reputation from review average
