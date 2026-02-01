@@ -19,6 +19,14 @@ app.get('/', (c) => c.json({
   status: 'running'
 }));
 
+// Detailed health for monitoring
+app.get('/health', (c) => c.json({ 
+  status: 'healthy',
+  timestamp: new Date().toISOString(),
+  uptime: process.uptime(),
+  version: '0.1.0'
+}));
+
 // Routes
 app.route('/agents', agentsRouter);
 app.route('/jobs', jobsRouter);

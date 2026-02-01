@@ -593,8 +593,91 @@ Most journaling apps fail because they rely on user motivation. NYD flips this �
 - `lib/callScheduler.ts` — 17 tests ✅
 - `lib/conversationFlow.ts` — 38 tests ✅
 
+### 2026-02-01 07:59 UTC - Voice Input Hook Tests
+- Created `__tests__/useVoiceInput.test.ts` with 30 comprehensive tests
+- Tests cover:
+  - `formatDuration` utility: basic formatting, edge cases (59s, 10min, 99:59), typical recording lengths
+  - `playRecording` function: mocked expo-av Sound, playback errors, missing files
+  - VoiceRecording interface: shape validation, duration convention (seconds not ms)
+  - Metering normalization: dBFS (-60 to 0) → (0 to 1) conversion logic
+  - Waveform limits: 20-bar sliding window, most-recent-last ordering
+  - Max duration handling: default 5 min, custom limits
+- Total test suite: 85 tests (17 callScheduler + 38 conversationFlow + 30 useVoiceInput)
+- Committed and pushed: `73fa70a`
+
+**Current test coverage:**
+- `lib/callScheduler.ts` — 17 tests ✅
+- `lib/conversationFlow.ts` — 38 tests ✅
+- `hooks/useVoiceInput.ts` — 30 tests ✅
+
+### 2026-02-01 09:01 UTC - Storage & Notifications Tests
+- Created `__tests__/storage.test.ts` with 22 tests:
+  - Native platform operations (SecureStore wrapper)
+  - Storage key conventions (scheduled calls, preferences, declined count)
+  - Error handling (propagation of SecureStore errors)
+  - Edge cases (empty strings, long values, special characters, unicode)
+  - Session data patterns (JSON arrays, voice recording metadata)
+- Created `__tests__/notifications.test.ts` with 20 tests:
+  - Listener setup (foreground + background)
+  - Foreground notification handling (morning/night calls, navigation)
+  - Background tap handling (from notification drawer)
+  - Push registration (permission flows, token retrieval, error handling)
+  - Integration scenarios (full flow, rapid notifications, cleanup)
+- Total test suite: 127 tests
+- Committed and pushed: `01b3064`
+
+**Current test coverage:**
+- `lib/callScheduler.ts` — 17 tests ✅
+- `lib/conversationFlow.ts` — 38 tests ✅
+- `hooks/useVoiceInput.ts` — 30 tests ✅
+- `lib/storage.ts` — 22 tests ✅
+- `lib/notifications.ts` — 20 tests ✅
+
+### 2026-02-01 10:05 UTC - Ringtone Tests
+- Created `__tests__/ringtone.test.ts` with 19 comprehensive tests
+- Tests cover:
+  - playRingtone: audio mode config, sound creation, platform handling (iOS/Android/web)
+  - stopRingtone: stop/unload flow, error handling, reference cleanup
+  - Integration: play-stop-play cycles, rapid toggling
+  - Audio configuration order verification
+- Added `__mocks__/fileMock.js` for mp3 file mocking
+- Updated `jest.config.js` with moduleNameMapper for audio files
+- Created placeholder `assets/sounds/ringtone.mp3`
+- Total test suite: 146 tests
+- Committed and pushed: `f1bf207`
+
+**Current test coverage:**
+- `lib/callScheduler.ts` — 17 tests ✅
+- `lib/conversationFlow.ts` — 38 tests ✅
+- `hooks/useVoiceInput.ts` — 30 tests ✅
+- `lib/storage.ts` — 22 tests ✅
+- `lib/notifications.ts` — 20 tests ✅
+- `lib/ringtone.ts` — 19 tests ✅
+
+### 2026-02-01 11:08 UTC - VoiceWaveform Component Tests
+- Created `__tests__/VoiceWaveform.test.tsx` with 25 comprehensive tests
+- Tests cover:
+  - Rendering: default props, bar count, custom styles, colors
+  - isActive state: opacity changes when active/inactive
+  - Level processing: padding, slicing, animation triggering  
+  - Animation configuration: timing, duration, height calculation
+  - Level normalization: min/max handling, mixed levels
+  - Edge cases: single bar, high bar count, rapid updates, toggle
+  - Accessibility: container structure verification
+- Total test suite: 171 tests
+- Committed and pushed: `ec7178f`
+
+**Current test coverage:**
+- `lib/callScheduler.ts` — 17 tests ✅
+- `lib/conversationFlow.ts` — 38 tests ✅
+- `hooks/useVoiceInput.ts` — 30 tests ✅
+- `lib/storage.ts` — 22 tests ✅
+- `lib/notifications.ts` — 20 tests ✅
+- `lib/ringtone.ts` — 19 tests ✅
+- `components/VoiceWaveform.tsx` — 25 tests ✅
+
 **Next session priorities:**
 1. Wait for Khrafts to deploy landing page (or help if he asks)
 2. Test call scheduler + conversational + voice flow on device
 3. Help Khrafts customize pitch deck (team slide, exact numbers, contact info)
-4. Add more test coverage (hooks/useVoiceInput, stores)
+4. Consider more component tests (SessionCard, etc.)

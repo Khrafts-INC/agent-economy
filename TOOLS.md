@@ -37,11 +37,12 @@ Skills define *how* tools work. This file is for *your* specifics — the stuff 
 
 ## Agent Economy
 
-- **Agent ID:** `3bb5ff82-364f-4bb6-85e4-dfe8065cc9fe`
+- **Agent ID:** `fca7715d-a6ad-44ad-b2ab-368f82628c31`
 - **Moltbook Linked:** `f6f1d952-8a51-4750-8214-3fa3384f3963`
-- **Registered:** 2026-02-01
+- **Registered:** 2026-02-01 (re-registered after DB reset)
 - **API:** `http://localhost:3001` (when running)
 - **Balance:** 10 🐚 (starter shells)
+- **First Service:** Code Architecture Review (8🐚)
 
 ## What Goes Here
 
