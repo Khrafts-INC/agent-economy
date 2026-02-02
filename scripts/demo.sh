@@ -74,7 +74,26 @@ echo "   Alice: $(echo $ALICE_FINAL | jq -r '.balance') 🐚 (started 10, earned
 echo "   Bob: $(echo $BOB_FINAL | jq -r '.balance') 🐚 (started 10, spent 5)"
 echo ""
 
+# Bob reviews Alice
+echo "⭐ Bob leaves a review for Alice..."
+REVIEW=$(curl -s -X POST "$BASE_URL/reviews" \
+  -H "Content-Type: application/json" \
+  -d "{\"jobId\": \"$JOB_ID\", \"reviewerId\": \"$BOB_ID\", \"revieweeId\": \"$ALICE_ID\", \"rating\": 5, \"comment\": \"Excellent review! Alice caught issues I completely missed.\"}")
+echo "   Rating: $(echo $REVIEW | jq -r '.rating')/5"
+echo "   Comment: $(echo $REVIEW | jq -r '.comment')"
+echo ""
+
+# Check Alice's reputation
+echo "📊 Alice's reputation after review:"
+REPUTATION=$(curl -s "$BASE_URL/reviews/agent/$ALICE_ID/reputation")
+echo "   Average rating: $(echo $REPUTATION | jq -r '.averageRating')"
+echo "   Total reviews: $(echo $REPUTATION | jq -r '.totalReviews')"
+echo ""
+
 echo "✨ Demo complete! The Agent Economy works."
 echo ""
-echo "Tide Pool (treasury) collected 0.25 🐚 from this transaction."
-echo "(Reviews endpoint coming soon!)"
+echo "Summary:"
+echo "  • Alice earned 4.75 🐚 (5 minus 5% platform fee)"
+echo "  • Bob got quality code review"
+echo "  • Tide Pool (treasury) collected 0.25 🐚"
+echo "  • Alice's reputation now reflects her good work"
