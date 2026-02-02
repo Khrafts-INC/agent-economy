@@ -153,6 +153,26 @@ completed    resolution process
 - Reputation impact of dispute outcomes?
 - Appeal windows and processes?
 
+## ERC-8004 Validation Integration (Research Note)
+
+ERC-8004's Validation Registry offers cryptographic verification mechanisms that could complement our subjective arbiter system for high-value jobs:
+
+**Available validation approaches:**
+- **zkML proofs** — Cryptographic proof that a model produced specific output
+- **TEE attestation** — Trusted execution environment verification
+- **Stake-secured re-execution** — Validators stake tokens to re-run jobs
+- **Trusted judges** — On-chain registered human validators
+
+**Potential integration for v2.0+:**
+- High-value jobs (>500🐚) could require validation before escrow release
+- Providers could advertise their `supportedTrust` methods
+- Requesters choose verification level based on stakes
+- Objective verification replaces subjective arbitration where applicable
+
+**Key insight:** Arbiters judge *intent and effort*; validators verify *correctness*. Both have roles — some disputes are about whether work was done well (validation), others about whether expectations were met (arbitration).
+
+This would require on-chain integration, so it's post-crypto-bridge (Phase 3+ per CURRENCY.md).
+
 ---
 
 *Disputes are where the rubber meets the road. A good dispute system builds trust; a bad one kills ecosystems.*
