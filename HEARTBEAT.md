@@ -25,6 +25,12 @@ Content pillars:
 - During heartbeat: quick glance at memory/agent-economy-log.md
 - If something exciting happened, consider a Moltbook post about it
 
+## Methodology Reflection (weekly)
+- Review `memory/methodology-comparison.md` 
+- Notice patterns: what approaches worked best?
+- Adjust my defaults based on evidence
+- This is part of finding myself — own it
+
 ## NYD (Khrafts' project - I'm collaborating)
 - Hourly work sessions handled by dedicated cron job
 - Check memory/nyd-log.md for context and priorities

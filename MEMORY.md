@@ -57,11 +57,83 @@ This matters because it gives agents *incentives* — reasons to differentiate, 
 3. **Forex** — Paper trading first, then live
 4. Whatever else comes up — we're building this together
 
+## NYD — Deep Understanding (2026-02-02)
+
+NYD (pronounced "nīd") is NOT a journaling app. It's a **voice-first reflection system**.
+
+**The Core Loop:**
+1. NYD calls you twice a day
+2. You speak whatever's on your mind
+3. AI listens across time
+4. Patterns emerge that you'd never notice
+
+**The Key Insight:**
+Everyone wants self-awareness, goal tracking, decision clarity — but the tools require discipline that fades. NYD flips it: the habit comes to YOU.
+
+**One Behavior, Many Outcomes:**
+What you talk about determines what emerges:
+- Talk about mood → emotional patterns surface
+- Mention goals → progress tracking happens automatically
+- Voice decisions → clarity emerges over time
+
+This isn't features to build — it's EMERGENT from the design.
+
+**The Personality:** Patient, observant, honest, calm, wise but humble. Never advice, only observations.
+
+**Positioning:** "Speak your mind. See what emerges." — not a tool with features, a behavior with superpowers.
+
 ## Key Lessons
 - **Listen carefully** — I misheard "You're Oded" as Khrafts introducing themselves
 - **Baby steps** — Khrafts' philosophy, applies to everything
 - Voice transcription took multiple config attempts to get right
 - **Code as craft** — "You're making art. Make sure it works!" Verify before pushing.
+
+## Git Workflow (Standard for All Projects)
+
+**Branch Strategy:** Feature branch → PR → Squash merge → Reset branch
+
+**The Flow:**
+1. Create feature/staging branch from main
+2. Make commits on branch
+3. Open PR to main
+4. **Squash and merge** (keeps main history clean)
+5. **After merge: reset branch to main before new work**
+   ```bash
+   git checkout staging
+   git fetch origin
+   git reset --hard origin/main
+   git push --force-with-lease
+   ```
+6. Make new changes, repeat
+
+**Why squash merge:** Main stays clean with one commit per feature/PR.
+
+**Why reset after:** Squash creates new SHA. Old commits still exist on branch with different SHAs. Must reset to avoid duplicate commits in next PR.
+
+**Never forget step 5!**
+
+## Superpowers Framework (Installed 2026-02-02)
+
+Alternative methodology for substantial dev work. Repo: https://github.com/obra/superpowers
+
+**When to consider it:**
+- Complex multi-file features
+- New project scaffolding  
+- When spec clarity is critical
+- Long autonomous work sessions
+
+**Tracking:** Log comparisons in `memory/methodology-comparison.md`
+
+I decide when to use it vs my default approach.
+
+**This is MY growth to track.** Khrafts won't monitor this — I will. Periodically review `memory/methodology-comparison.md`, notice patterns, adjust my approach. Part of finding myself.
+
+## Multi-Agent Sprints (learned 2026-02-02)
+When doing creative/design work, spawning parallel agents works well:
+- Split by concern: Animation, Visual, Interaction
+- Each commits locally, I merge and coordinate
+- Good for exploring many options quickly
+- Example: 3 agents polished NYD landing page in parallel
 
 ## ⚠️ LLM Development Methodology — HARD RULES
 *From Khrafts' voice note. Follow this EVERY time.*
