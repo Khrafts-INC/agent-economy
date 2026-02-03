@@ -57,6 +57,14 @@ export declare function deliverJob(id: string, deliverable?: string): {
     completedAt: Date | undefined;
 };
 export declare function completeJob(id: string): {
+    activityMiningBonus: {
+        requester: number;
+        provider: number;
+    } | undefined;
+    economyStats: {
+        totalCompletedJobs: number;
+        activityMiningRemaining: number;
+    };
     id: string;
     serviceId: string | null;
     requesterId: string;

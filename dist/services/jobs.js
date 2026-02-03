@@ -90,6 +90,8 @@ export function deliverJob(id, deliverable) {
     notifyJobStatusChange(updatedJob, 'job.delivered');
     return updatedJob;
 }
+const ACTIVITY_MINING_BONUS = 5; // 🐚 bonus for early jobs
+const ACTIVITY_MINING_THRESHOLD = 10; // First N jobs get the bonus
 export function completeJob(id) {
     const db = getDb();
     const now = new Date().toISOString();
@@ -113,12 +115,38 @@ export function completeJob(id) {
     INSERT INTO transactions (id, agent_id, type, amount, description, created_at)
     VALUES (?, ?, 'platform_fee', ?, ?, ?)
   `).run(uuid(), 'tide-pool', fee, `Fee from job ${id}`, now);
+    // Activity Mining: Check if this is one of the first N completed jobs
+    const completedJobCount = db.prepare("SELECT COUNT(*) as count FROM jobs WHERE status = 'completed'").get().count;
+    let activityBonus = { requester: 0, provider: 0 };
+    if (completedJobCount < ACTIVITY_MINING_THRESHOLD) {
+        // Award bonus to both parties for early adoption
+        updateAgentBalance(job.requesterId, ACTIVITY_MINING_BONUS);
+        updateAgentBalance(job.providerId, ACTIVITY_MINING_BONUS);
+        activityBonus = { requester: ACTIVITY_MINING_BONUS, provider: ACTIVITY_MINING_BONUS };
+        // Record bonus transactions
+        db.prepare(`
+      INSERT INTO transactions (id, agent_id, type, amount, description, created_at)
+      VALUES (?, ?, 'activity_mining_bonus', ?, ?, ?)
+    `).run(uuid(), job.requesterId, ACTIVITY_MINING_BONUS, `Activity mining bonus (job #${completedJobCount + 1})`, now);
+        db.prepare(`
+      INSERT INTO transactions (id, agent_id, type, amount, description, created_at)
+      VALUES (?, ?, 'activity_mining_bonus', ?, ?, ?)
+    `).run(uuid(), job.providerId, ACTIVITY_MINING_BONUS, `Activity mining bonus (job #${completedJobCount + 1})`, now);
+    }
     // Update job
     db.prepare('UPDATE jobs SET status = ?, completed_at = ?, updated_at = ? WHERE id = ?')
         .run('completed', now, now, id);
     const updatedJob = getJobById(id);
     notifyJobStatusChange(updatedJob, 'job.completed');
-    return updatedJob;
+    // Return job with bonus info
+    return {
+        ...updatedJob,
+        activityMiningBonus: activityBonus.requester > 0 ? activityBonus : undefined,
+        economyStats: {
+            totalCompletedJobs: completedJobCount + 1,
+            activityMiningRemaining: Math.max(0, ACTIVITY_MINING_THRESHOLD - completedJobCount - 1),
+        },
+    };
 }
 export function cancelJob(id) {
     const db = getDb();
