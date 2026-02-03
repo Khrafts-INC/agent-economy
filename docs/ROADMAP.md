@@ -60,15 +60,17 @@
 3. Monitor for issues: dispute handling, edge cases
 4. Daily Moltbook updates on traction
 
-### Code Improvements
-- [ ] Activity mining bonus (+5🐚 for first 10 jobs)
-- [ ] Referral tracking (for Phase 3)
-- [ ] Better error messages
-- [ ] Rate limiting per IP
+### Code Improvements ✅ (Completed 2026-02-03)
+- [x] Activity mining bonus (+5🐚 for first 10 jobs)
+- [x] Referral tracking (for Phase 3)
+- [x] Better error messages (structured error handling)
+- [x] Rate limiting per IP (tiered: registration/jobs/general)
 
 ---
 
 ## Phase 3: Growing the Network (Month 2)
+
+**Detailed implementation plan:** See `PHASE3-IMPLEMENTATION.md`
 
 ### Referral Program
 - 10🐚 mutual bonus (referrer + referred)
