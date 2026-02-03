@@ -9,6 +9,7 @@ import { agentRoutes } from './api/agents.js';
 import { serviceRoutes } from './api/services.js';
 import { jobRoutes } from './api/jobs.js';
 import { reviewRoutes } from './api/reviews.js';
+import templateRoutes from './api/templates.js';
 import { 
   registrationLimiter, 
   jobLimiter, 
@@ -82,6 +83,7 @@ app.route('/agents', agentRoutes);
 app.route('/services', serviceRoutes);
 app.route('/jobs', jobRoutes);
 app.route('/reviews', reviewRoutes);
+app.route('/templates', templateRoutes);
 
 // Initialize database and start server
 import { serve } from '@hono/node-server';
