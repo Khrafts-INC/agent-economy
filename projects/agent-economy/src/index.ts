@@ -6,12 +6,14 @@ import agentsRouter from './api/agents.js';
 import servicesRouter from './api/services.js';
 import jobsRouter from './api/jobs.js';
 import reviewsRouter from './api/reviews.js';
+import { errorHandler } from './utils/middleware.js';
 
 const app = new Hono();
 
 // Middleware
 app.use('*', logger());
 app.use('*', cors());
+app.use('*', errorHandler);
 
 // Health check
 app.get('/', (c) => c.json({ 
