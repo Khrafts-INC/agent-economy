@@ -9,12 +9,28 @@ import { agentRoutes } from './api/agents.js';
 import { serviceRoutes } from './api/services.js';
 import { jobRoutes } from './api/jobs.js';
 import { reviewRoutes } from './api/reviews.js';
+import { 
+  registrationLimiter, 
+  jobLimiter, 
+  serviceLimiter, 
+  readLimiter 
+} from './middleware/rateLimiter.js';
 
 const app = new Hono();
 
 // Middleware
 app.use('*', logger());
 app.use('*', cors());
+
+// Rate limiting (applied before route handlers)
+// Strict limits on writes, relaxed on reads
+app.post('/agents', registrationLimiter);
+app.post('/agents/*', registrationLimiter);
+app.post('/jobs', jobLimiter);
+app.post('/jobs/*', jobLimiter);
+app.put('/jobs/*', jobLimiter);
+app.post('/services', serviceLimiter);
+app.get('*', readLimiter);
 
 // Health check
 app.get('/', (c) => c.json({ 
