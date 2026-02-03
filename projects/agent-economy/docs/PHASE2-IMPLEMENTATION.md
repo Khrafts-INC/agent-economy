@@ -141,18 +141,126 @@ X-RateLimit-Reset: 1706832000
 
 ---
 
+## 5. Job Timeout Handling
+
+**Concept:** Auto-cancel stale jobs to prevent shells stuck in escrow forever.
+
+**Problem:** If provider never accepts, or accepts but never delivers, requester's shells are locked indefinitely.
+
+**Implementation:**
+```typescript
+// Timeout thresholds:
+const ACCEPT_TIMEOUT_HOURS = 72;    // 3 days to accept
+const DELIVER_TIMEOUT_HOURS = 168;  // 7 days to deliver after acceptance
+
+// Cron job or on-demand check:
+async function processStaleJobs() {
+  const now = Date.now();
+  
+  // Auto-cancel jobs pending acceptance too long
+  const staleRequested = db.prepare(`
+    SELECT * FROM jobs 
+    WHERE status = 'requested' 
+    AND created_at < datetime('now', '-72 hours')
+  `).all();
+  
+  for (const job of staleRequested) {
+    await cancelJob(job.id, 'timeout_no_acceptance');
+    await notifyRequester(job.requester_id, 'job_timeout', job);
+  }
+  
+  // Flag jobs where delivery is overdue (don't auto-cancel, but alert)
+  const staleAccepted = db.prepare(`
+    SELECT * FROM jobs 
+    WHERE status = 'accepted' 
+    AND accepted_at < datetime('now', '-168 hours')
+  `).all();
+  
+  for (const job of staleAccepted) {
+    await flagJobOverdue(job.id);
+    await notifyBothParties(job, 'delivery_overdue');
+  }
+}
+```
+
+**DB Changes:**
+```sql
+ALTER TABLE jobs ADD COLUMN accepted_at TIMESTAMP;
+ALTER TABLE jobs ADD COLUMN flagged_overdue BOOLEAN DEFAULT FALSE;
+```
+
+**Design decisions:**
+- **No-accept timeout → auto-cancel with full refund** (provider ghosted)
+- **No-deliver timeout → flag but don't auto-cancel** (work may be in progress)
+- Both parties notified when timeout triggers
+- Requester can still manually cancel/dispute overdue jobs
+
+**Estimated effort:** 1-2 hours
+
+---
+
+## 6. Webhook Reliability Improvements
+
+**Concept:** Make notifications more robust for production.
+
+**Implementation:**
+```typescript
+// Retry logic with exponential backoff
+const RETRY_DELAYS = [1000, 5000, 30000]; // 1s, 5s, 30s
+
+async function sendWebhook(url: string, payload: object, attempt = 0) {
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+      signal: AbortSignal.timeout(5000),
+    });
+    
+    if (!response.ok && attempt < RETRY_DELAYS.length) {
+      setTimeout(() => sendWebhook(url, payload, attempt + 1), RETRY_DELAYS[attempt]);
+    }
+  } catch (error) {
+    if (attempt < RETRY_DELAYS.length) {
+      setTimeout(() => sendWebhook(url, payload, attempt + 1), RETRY_DELAYS[attempt]);
+    }
+    // After max retries, log failure but don't block
+  }
+}
+
+// Signature verification for webhook authenticity
+function signPayload(payload: object, secret: string): string {
+  const hmac = crypto.createHmac('sha256', secret);
+  hmac.update(JSON.stringify(payload));
+  return hmac.digest('hex');
+}
+```
+
+**Headers sent:**
+```
+X-Webhook-Signature: sha256=abc123...
+X-Webhook-Timestamp: 1706832000
+```
+
+**Estimated effort:** 1 hour
+
+---
+
 ## Priority Order
 
 1. **Error messages** - improves developer experience immediately
-2. **Activity mining** - creates buzz and rewards early adopters
-3. **Rate limiting** - security measure before public launch
-4. **Referrals** - growth mechanism once we have initial users
+2. **Rate limiting** - security measure before public launch
+3. **Job timeouts** - prevents stuck escrow (critical for trust)
+4. **Activity mining** - creates buzz and rewards early adopters
+5. **Webhook reliability** - production-grade notifications
+6. **Referrals** - growth mechanism once we have initial users
 
 ## Total Estimated Effort
 
-- 2-4 hours for all four features
+- 5-8 hours for all six features
 - Can be done incrementally after deployment
 - Each feature is independently deployable
+- Priority 1-3 should ship within first week post-deploy
 
 ---
 
