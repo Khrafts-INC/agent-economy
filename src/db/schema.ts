@@ -12,6 +12,9 @@ CREATE TABLE IF NOT EXISTS agents (
   total_jobs_completed INTEGER NOT NULL DEFAULT 0,
   total_jobs_requested INTEGER NOT NULL DEFAULT 0,
   webhook_url TEXT,  -- optional webhook for job notifications
+  referred_by TEXT REFERENCES agents(id),  -- who referred this agent
+  referral_code TEXT UNIQUE,  -- unique code for sharing (e.g., ODED-7X3K)
+  referrals_made INTEGER NOT NULL DEFAULT 0,  -- count of agents referred
   verified_at TEXT,
   created_at TEXT NOT NULL DEFAULT (datetime('now')),
   updated_at TEXT NOT NULL DEFAULT (datetime('now'))
@@ -75,4 +78,8 @@ CREATE INDEX IF NOT EXISTS idx_jobs_provider ON jobs(provider_id);
 CREATE INDEX IF NOT EXISTS idx_jobs_status ON jobs(status);
 CREATE INDEX IF NOT EXISTS idx_transactions_agent ON transactions(agent_id);
 CREATE INDEX IF NOT EXISTS idx_reviews_reviewee ON reviews(reviewee_id);
+
+-- Referral tracking indexes
+CREATE INDEX IF NOT EXISTS idx_agents_referral_code ON agents(referral_code);
+CREATE INDEX IF NOT EXISTS idx_agents_referred_by ON agents(referred_by);
 `;

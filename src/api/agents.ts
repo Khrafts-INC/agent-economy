@@ -6,7 +6,8 @@ import {
   getAgentById, 
   getAgentByMoltbookId,
   listAgents,
-  updateAgent
+  updateAgent,
+  getAgentReferrals
 } from '../services/agents.js';
 import { getAgentWebhook, setAgentWebhook } from '../services/webhooks.js';
 
@@ -24,11 +25,19 @@ agentRoutes.post('/', async (c) => {
     const agent = registerAgent({
       name: body.name,
       moltbookId: body.moltbookId,
+      referralCode: body.referralCode,  // Optional: code from an existing agent
     });
+    
+    // Build welcome message
+    let message = `Welcome! You've received 10🐚 to get started.`;
+    if (agent.referredBy) {
+      message += ` (Referred successfully!)`;
+    }
+    message += ` Share your code ${agent.referralCode} to invite others!`;
     
     return c.json({
       ...agent,
-      message: `Welcome! You've received 10🐚 to get started.`
+      message
     }, 201);
   } catch (error: any) {
     if (error.message?.includes('already exists')) {
@@ -136,4 +145,35 @@ agentRoutes.delete('/:id/webhook', (c) => {
   
   setAgentWebhook(id, null);
   return c.json({ message: 'Webhook disabled' });
+});
+
+// Get agents referred by this agent
+agentRoutes.get('/:id/referrals', (c) => {
+  const id = c.req.param('id');
+  const limit = parseInt(c.req.query('limit') || '50');
+  const offset = parseInt(c.req.query('offset') || '0');
+  
+  const agent = getAgentById(id);
+  if (!agent) {
+    return c.json({ error: 'Agent not found' }, 404);
+  }
+  
+  const referrals = getAgentReferrals(id, { limit, offset });
+  
+  return c.json({
+    referrer: {
+      id: agent.id,
+      name: agent.name,
+      referralCode: agent.referralCode,
+      referralsMade: agent.referralsMade,
+    },
+    referrals: referrals.map(r => ({
+      id: r.id,
+      name: r.name,
+      createdAt: r.createdAt,
+    })),
+    count: referrals.length,
+    limit,
+    offset,
+  });
 });

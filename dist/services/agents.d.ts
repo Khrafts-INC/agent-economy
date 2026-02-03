@@ -8,6 +8,9 @@ interface AgentRow {
     reputation_score: number;
     total_jobs_completed: number;
     total_jobs_requested: number;
+    referred_by: string | null;
+    referral_code: string | null;
+    referrals_made: number;
     verified_at: string | null;
     created_at: string;
     updated_at: string;
@@ -17,11 +20,19 @@ declare function rowToAgent(row: AgentRow): Agent & {
     reputationScore: number;
     jobsCompleted: number;
     jobsRequested: number;
+    referralCode?: string;
+    referredBy?: string;
+    referralsMade: number;
     verifiedAt?: Date;
 };
-export declare function registerAgent(request: RegisterRequest): Agent & {
+export declare function registerAgent(request: RegisterRequest & {
+    referralCode?: string;
+}): Agent & {
     bio?: string;
     reputationScore: number;
+    referralCode: string;
+    referredBy?: string;
+    referralsMade: number;
 };
 export declare function getAgentById(id: string): ReturnType<typeof rowToAgent> | null;
 export declare function getAgentByMoltbookId(moltbookId: string): ReturnType<typeof rowToAgent> | null;
@@ -37,4 +48,9 @@ export declare function getAgentBalance(id: string): number | null;
 export declare function updateAgentBalance(id: string, delta: number): boolean;
 export declare function incrementJobCount(id: string, field: 'completed' | 'requested'): void;
 export declare function updateReputationScore(id: string): void;
+export declare function getAgentReferrals(id: string, options?: {
+    limit?: number;
+    offset?: number;
+}): ReturnType<typeof rowToAgent>[];
+export declare function getAgentByReferralCode(code: string): ReturnType<typeof rowToAgent> | null;
 export {};

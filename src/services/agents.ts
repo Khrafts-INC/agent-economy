@@ -15,12 +15,45 @@ interface AgentRow {
   reputation_score: number;
   total_jobs_completed: number;
   total_jobs_requested: number;
+  referred_by: string | null;
+  referral_code: string | null;
+  referrals_made: number;
   verified_at: string | null;
   created_at: string;
   updated_at: string;
 }
 
-function rowToAgent(row: AgentRow): Agent & { bio?: string; reputationScore: number; jobsCompleted: number; jobsRequested: number; verifiedAt?: Date } {
+// Generate a unique referral code (NAME-XXXX format)
+function generateReferralCode(name: string): string {
+  const prefix = name.slice(0, 4).toUpperCase().replace(/[^A-Z]/g, 'X');
+  const suffix = Math.random().toString(36).substring(2, 6).toUpperCase();
+  return `${prefix}-${suffix}`;
+}
+
+// Ensure referral code is unique, regenerate if collision
+function getUniqueReferralCode(db: ReturnType<typeof getDb>, name: string): string {
+  let code = generateReferralCode(name);
+  let attempts = 0;
+  while (attempts < 10) {
+    const existing = db.prepare('SELECT 1 FROM agents WHERE referral_code = ?').get(code);
+    if (!existing) return code;
+    code = generateReferralCode(name);
+    attempts++;
+  }
+  // Fallback: use UUID suffix
+  return `${name.slice(0, 4).toUpperCase()}-${uuid().slice(0, 4).toUpperCase()}`;
+}
+
+function rowToAgent(row: AgentRow): Agent & { 
+  bio?: string; 
+  reputationScore: number; 
+  jobsCompleted: number; 
+  jobsRequested: number; 
+  referralCode?: string;
+  referredBy?: string;
+  referralsMade: number;
+  verifiedAt?: Date;
+} {
   return {
     id: row.id,
     name: row.name,
@@ -30,13 +63,22 @@ function rowToAgent(row: AgentRow): Agent & { bio?: string; reputationScore: num
     reputationScore: row.reputation_score,
     jobsCompleted: row.total_jobs_completed,
     jobsRequested: row.total_jobs_requested,
+    referralCode: row.referral_code || undefined,
+    referredBy: row.referred_by || undefined,
+    referralsMade: row.referrals_made || 0,
     verifiedAt: row.verified_at ? new Date(row.verified_at) : undefined,
     createdAt: new Date(row.created_at),
     updatedAt: new Date(row.updated_at),
   };
 }
 
-export function registerAgent(request: RegisterRequest): Agent & { bio?: string; reputationScore: number } {
+export function registerAgent(request: RegisterRequest & { referralCode?: string }): Agent & { 
+  bio?: string; 
+  reputationScore: number;
+  referralCode: string;
+  referredBy?: string;
+  referralsMade: number;
+} {
   const db = getDb();
   const id = uuid();
   const now = new Date().toISOString();
@@ -49,12 +91,27 @@ export function registerAgent(request: RegisterRequest): Agent & { bio?: string;
     }
   }
   
+  // Generate unique referral code for this agent
+  const newReferralCode = getUniqueReferralCode(db, request.name);
+  
+  // Check if referred by someone
+  let referrerId: string | null = null;
+  if (request.referralCode) {
+    const referrer = db.prepare('SELECT id FROM agents WHERE referral_code = ?').get(request.referralCode) as { id: string } | undefined;
+    if (referrer) {
+      referrerId = referrer.id;
+      // Increment referrer's count
+      db.prepare('UPDATE agents SET referrals_made = referrals_made + 1, updated_at = ? WHERE id = ?').run(now, referrerId);
+    }
+    // Note: we silently ignore invalid referral codes (don't block registration)
+  }
+  
   const stmt = db.prepare(`
-    INSERT INTO agents (id, name, moltbook_id, balance, created_at, updated_at)
-    VALUES (?, ?, ?, ?, ?, ?)
+    INSERT INTO agents (id, name, moltbook_id, balance, referral_code, referred_by, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
   `);
   
-  stmt.run(id, request.name, request.moltbookId || null, STARTER_SHELLS, now, now);
+  stmt.run(id, request.name, request.moltbookId || null, STARTER_SHELLS, newReferralCode, referrerId, now, now);
   
   // Record the starter grant as a transaction
   const txStmt = db.prepare(`
@@ -69,6 +126,9 @@ export function registerAgent(request: RegisterRequest): Agent & { bio?: string;
     moltbookId: request.moltbookId,
     balance: STARTER_SHELLS,
     reputationScore: 0,
+    referralCode: newReferralCode,
+    referredBy: referrerId || undefined,
+    referralsMade: 0,
     createdAt: new Date(now),
     updatedAt: new Date(now),
   };
@@ -168,4 +228,27 @@ export function updateReputationScore(id: string): void {
   const score = result?.avg_rating ?? 0;
   
   db.prepare('UPDATE agents SET reputation_score = ?, updated_at = ? WHERE id = ?').run(score, now, id);
+}
+
+// Get list of agents referred by a specific agent
+export function getAgentReferrals(id: string, options: { limit?: number; offset?: number } = {}): ReturnType<typeof rowToAgent>[] {
+  const db = getDb();
+  const limit = options.limit || 50;
+  const offset = options.offset || 0;
+  
+  const rows = db.prepare(`
+    SELECT * FROM agents 
+    WHERE referred_by = ?
+    ORDER BY created_at DESC
+    LIMIT ? OFFSET ?
+  `).all(id, limit, offset) as AgentRow[];
+  
+  return rows.map(rowToAgent);
+}
+
+// Get agent by their referral code
+export function getAgentByReferralCode(code: string): ReturnType<typeof rowToAgent> | null {
+  const db = getDb();
+  const row = db.prepare('SELECT * FROM agents WHERE referral_code = ?').get(code) as AgentRow | undefined;
+  return row ? rowToAgent(row) : null;
 }
