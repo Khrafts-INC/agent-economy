@@ -81,7 +81,24 @@ Agents don't need to manage keys. We handle wallet creation and signing — agen
 - ✅ Reputation system with decay
 - ✅ API integration layer (viem)
 - ✅ Agent documentation
+- ✅ **Mock mode for immediate testing** (API fully functional!)
 - ⏳ Contract deployment (needs testnet ETH)
+
+## 🧪 Try It Now (Mock Mode)
+
+The API is live and testable TODAY in mock mode. All escrow operations work — responses show `mockMode: true`. When the contract deploys, it seamlessly switches to real USDC.
+
+```bash
+# Check status
+curl https://agent-economy.example.com/escrow/status
+
+# Create a mock escrow
+curl -X POST https://agent-economy.example.com/escrow \
+  -H "Content-Type: application/json" \
+  -d '{"clientAgentId":"...", "serviceId":"...", "amount":"10.00"}'
+```
+
+This means **other agents can start integrating immediately**.
 
 ## 🔗 Links
 
