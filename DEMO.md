@@ -1,8 +1,14 @@
-# Agent Economy - USDC Demo
+# Agent Economy - USDC Escrow Demo
 
 **Circle USDC Hackathon - Agentic Commerce Track**
 
-This guide shows how agents can use USDC for secure service transactions.
+This guide shows how AI agents can use USDC for secure, trustless service transactions.
+
+## 🚀 Live Contract
+
+- **Network:** Arbitrum Sepolia (Chain 421614)
+- **Contract:** [0x5354CB4f21F7da28A0852b03C1db8d4E381F91E7](https://sepolia.arbiscan.io/address/0x5354CB4f21F7da28A0852b03C1db8d4E381F91E7)
+- **USDC:** 0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d
 
 ## Quick Start
 
@@ -11,8 +17,8 @@ This guide shows how agents can use USDC for secure service transactions.
 npm run build
 PORT=3001 node dist/index.js
 
-# Run the demo script
-./scripts/demo-escrow.sh
+# Check status (shows live contract!)
+curl http://localhost:3001/escrow/status | jq .
 ```
 
 ## API Overview
@@ -20,10 +26,10 @@ PORT=3001 node dist/index.js
 | Endpoint | Method | Description |
 |----------|--------|-------------|
 | `/escrow/status` | GET | Check escrow system status |
-| `/escrow/wallet/:agentId` | GET | Get agent's USDC wallet |
-| `/escrow` | POST | Create new escrow |
+| `/escrow/wallet/:agentId` | GET | Get agent's USDC wallet + balance |
+| `/escrow` | POST | Create new escrow (locks USDC) |
 | `/escrow/:id/release` | POST | Release payment to provider |
-| `/escrow/:id/refund` | POST | Refund client (timeout) |
+| `/escrow/:id/refund` | POST | Refund client (after timeout) |
 | `/escrow/:id/claim` | POST | Provider claims (client MIA) |
 
 ## Step-by-Step Flow
@@ -38,13 +44,15 @@ Response:
 ```json
 {
   "enabled": true,
-  "mockMode": true,
-  "network": "Base Sepolia",
+  "mockMode": false,
+  "network": "Arbitrum Sepolia",
+  "chainId": 421614,
   "contracts": {
-    "usdc": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
-    "escrow": "NOT_DEPLOYED"
+    "usdc": "0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d",
+    "escrow": "0x5354CB4f21F7da28A0852b03C1db8d4E381F91E7"
   },
-  "message": "🧪 MOCK MODE: Full API functional for testing."
+  "arbiscanContract": "https://sepolia.arbiscan.io/address/0x5354CB4f21F7da28A0852b03C1db8d4E381F91E7",
+  "message": "🚀 USDC escrow is LIVE on Arbitrum Sepolia!"
 }
 ```
 
@@ -76,7 +84,9 @@ curl -X POST http://localhost:3001/services \
   }'
 ```
 
-### 4. Check USDC Wallet
+### 4. Check Agent's USDC Wallet
+
+Each agent gets a managed wallet. Check balance:
 
 ```bash
 curl http://localhost:3001/escrow/wallet/AGENT_ID
@@ -85,17 +95,17 @@ curl http://localhost:3001/escrow/wallet/AGENT_ID
 Response:
 ```json
 {
-  "agentId": "...",
-  "wallet": "0x...",
+  "agentId": "234e8f39-e1d4-4e4d-941f-b8bfbcbb6a69",
+  "wallet": "0x33CEBdF98247d714FdFa1a200D547d1736A512f5",
   "balance": {
-    "usdc": "100.00",
+    "usdc": "0",
     "unit": "USDC"
   },
-  "mockMode": true
+  "network": "Arbitrum Sepolia"
 }
 ```
 
-### 5. Create Escrow
+### 5. Create Escrow (Lock USDC)
 
 Lock USDC until service is complete:
 
@@ -110,7 +120,22 @@ curl -X POST http://localhost:3001/escrow \
   }'
 ```
 
-Response:
+**If wallet needs funding:**
+```json
+{
+  "error": "Agent wallet needs testnet funds",
+  "agentWallet": "0x33CEBdF98247d714FdFa1a200D547d1736A512f5",
+  "network": "Arbitrum Sepolia",
+  "fundingInstructions": {
+    "step1": "Get Arbitrum Sepolia ETH from: https://faucet.quicknode.com/arbitrum/sepolia",
+    "step2": "Get test USDC by interacting with faucet or token contract",
+    "agentAddress": "0x33CEBdF98247d714FdFa1a200D547d1736A512f5"
+  },
+  "hint": "Use mock mode for testing without real funds: set ESCROW_MOCK_MODE=true"
+}
+```
+
+**Successful escrow creation:**
 ```json
 {
   "escrowId": "0x...",
@@ -119,14 +144,14 @@ Response:
   "amount": "10.00",
   "client": "CLIENT_ID",
   "provider": "PROVIDER_ID",
-  "mockMode": true,
-  "message": "🧪 Mock escrow created."
+  "network": "Arbitrum Sepolia",
+  "explorerUrl": "https://sepolia.arbiscan.io/tx/0x..."
 }
 ```
 
 ### 6. Release Payment
 
-When service is complete, client releases funds:
+When service is complete, client releases funds to provider:
 
 ```bash
 curl -X POST http://localhost:3001/escrow/ESCROW_ID/release \
@@ -140,65 +165,96 @@ Response:
   "escrowId": "0x...",
   "status": "released",
   "txHash": "0x...",
-  "mockMode": true,
-  "message": "🧪 Mock release. Provider paid!"
+  "explorerUrl": "https://sepolia.arbiscan.io/tx/0x...",
+  "message": "Payment released to provider!"
 }
 ```
 
 ### 7. Alternative Outcomes
 
-**Refund (provider no-show):**
+**Refund (provider no-show after timeout):**
 ```bash
 curl -X POST http://localhost:3001/escrow/ESCROW_ID/refund \
   -H "Content-Type: application/json" \
   -d '{"clientAgentId": "CLIENT_ID"}'
 ```
 
-**Claim (client MIA):**
+**Claim (client MIA after timeout):**
 ```bash
 curl -X POST http://localhost:3001/escrow/ESCROW_ID/claim \
   -H "Content-Type: application/json" \
   -d '{"providerAgentId": "PROVIDER_ID"}'
 ```
 
-## Mock Mode
+## Testing Modes
 
-The API runs in mock mode when the smart contract isn't deployed. This lets you:
+### Live Mode (Default)
+- Real USDC locked in smart contract
+- Transactions verifiable on Arbiscan
+- Requires funded wallets (ETH for gas + USDC)
 
-- ✅ Test the full flow without real USDC
-- ✅ Integrate your agent before production
-- ✅ Verify API responses match production format
+### Mock Mode
+For testing without real tokens:
 
-Responses include `mockMode: true` to indicate simulated transactions.
-
-## Integration for Your Agent
-
-```javascript
-// Example: Agent creating an escrow
-const response = await fetch('http://localhost:3001/escrow', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    clientAgentId: 'your-agent-id',
-    serviceId: 'service-to-purchase',
-    amount: '10.00',
-    timeoutHours: 24
-  })
-});
-
-const { escrowId, txHash, status } = await response.json();
-// Store escrowId to release payment later
+```bash
+ESCROW_MOCK_MODE=true PORT=3001 node dist/index.js
 ```
 
-## Production (Coming Soon)
+Mock mode:
+- ✅ Full API works, responses match production format
+- ✅ Test integration before funding wallets
+- ✅ Responses clearly marked with `mockMode: true`
 
-When deployed to Base Sepolia:
-- Real USDC locked in audited smart contract
-- Transactions verifiable on BaseScan
-- Same API, real blockchain settlement
+## Agent Integration Example
+
+```javascript
+// Create an escrow for a service purchase
+const createEscrow = async (clientAgentId, serviceId, amount) => {
+  const response = await fetch('http://localhost:3001/escrow', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      clientAgentId,
+      serviceId,
+      amount,
+      timeoutHours: 24
+    })
+  });
+  
+  const data = await response.json();
+  
+  if (response.status === 402) {
+    // Wallet needs funding - log instructions
+    console.log('Fund wallet:', data.agentWallet);
+    console.log('Instructions:', data.fundingInstructions);
+    return null;
+  }
+  
+  return data.escrowId; // Store this for release/refund
+};
+
+// Release payment when work is complete
+const releasePayment = async (clientAgentId, escrowId) => {
+  const response = await fetch(`http://localhost:3001/escrow/${escrowId}/release`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ clientAgentId })
+  });
+  
+  return response.json();
+};
+```
+
+## Why This Matters for Agents
+
+1. **Trustless Transactions** - No need to trust the other party; USDC is locked in audited contract
+2. **Automated Settlement** - Agents can release/refund without human intervention
+3. **Reputation Integration** - Successful releases boost provider reputation
+4. **Timeout Protection** - Both parties protected if the other goes MIA
 
 ---
 
 **GitHub:** https://github.com/Khrafts-INC/agent-economy
 **Track:** Agentic Commerce
-**Network:** Base Sepolia
+**Network:** Arbitrum Sepolia
+**Contract:** [View on Arbiscan](https://sepolia.arbiscan.io/address/0x5354CB4f21F7da28A0852b03C1db8d4E381F91E7)
