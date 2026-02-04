@@ -15,7 +15,8 @@ import {
   getUSDCBalance,
   getAgentWallet,
   isContractDeployed,
-  ADDRESSES
+  ADDRESSES,
+  NETWORK
 } from '../contracts/escrow.js';
 import { randomBytes } from 'crypto';
 
@@ -39,13 +40,16 @@ escrowRoutes.get('/status', async (c) => {
   return c.json({
     enabled: deployed || MOCK_MODE,
     mockMode: MOCK_MODE && !deployed,
-    network: 'Base Sepolia',
+    network: NETWORK.name,
+    chainId: NETWORK.chainId,
+    explorer: NETWORK.explorer,
     contracts: {
       usdc: ADDRESSES.USDC,
       escrow: deployed ? ADDRESSES.ESCROW : 'NOT_DEPLOYED'
     },
+    arbiscanContract: deployed ? `${NETWORK.explorer}/address/${ADDRESSES.ESCROW}` : null,
     message: deployed 
-      ? 'USDC escrow is live! Create escrows to secure agent transactions.'
+      ? '🚀 USDC escrow is LIVE on Arbitrum Sepolia! Create escrows to secure agent transactions.'
       : MOCK_MODE
         ? '🧪 MOCK MODE: Full API functional for testing. No real USDC involved.'
         : 'Escrow contract pending deployment. Check back soon!'
@@ -78,7 +82,7 @@ escrowRoutes.get('/wallet/:agentId', async (c) => {
         usdc: '100.00',  // Mock balance for testing
         unit: 'USDC'
       },
-      network: 'Base Sepolia',
+      network: NETWORK.name,
       mockMode: true
     });
   }
@@ -94,7 +98,7 @@ escrowRoutes.get('/wallet/:agentId', async (c) => {
         usdc: balance,
         unit: 'USDC'
       },
-      network: 'Base Sepolia'
+      network: NETWORK.name
     });
   } catch (error: any) {
     return c.json({ error: error.message }, 500);
@@ -155,9 +159,9 @@ escrowRoutes.post('/', async (c) => {
       serviceId,
       client: clientAgentId,
       provider: service.provider_id,
-      network: 'Base Sepolia',
+      network: NETWORK.name,
       mockMode: true,
-      explorerUrl: `https://sepolia.basescan.org/tx/${txHash}`,
+      explorerUrl: `https://sepolia.arbiscan.io/tx/${txHash}`,
       message: '🧪 Mock escrow created. In production, USDC would be locked on-chain.'
     }, 201);
   }
@@ -193,11 +197,30 @@ escrowRoutes.post('/', async (c) => {
       serviceId,
       client: clientAgentId,
       provider: service.provider_id,
-      network: 'Base Sepolia',
-      explorerUrl: `https://sepolia.basescan.org/tx/${result.txHash}`
+      network: NETWORK.name,
+      explorerUrl: `https://sepolia.arbiscan.io/tx/${result.txHash}`
     }, 201);
   } catch (error: any) {
     console.error('Escrow creation failed:', error);
+    
+    // Check if it's a funding issue and provide helpful response
+    if (error.message?.includes('insufficient funds') || error.shortMessage?.includes('insufficient funds')) {
+      // Get the agent's wallet address for funding instructions
+      const wallet = await getAgentWallet(clientAgentId);
+      return c.json({ 
+        error: 'Agent wallet needs testnet funds',
+        agentWallet: wallet.address,
+        network: NETWORK.name,
+        chainId: NETWORK.chainId,
+        fundingInstructions: {
+          step1: 'Get Arbitrum Sepolia ETH from: https://faucet.quicknode.com/arbitrum/sepolia',
+          step2: `Get test USDC by interacting with faucet or token contract`,
+          agentAddress: wallet.address
+        },
+        hint: 'Use mock mode for testing without real funds: set ESCROW_MOCK_MODE=true'
+      }, 402); // Payment Required
+    }
+    
     return c.json({ error: error.message }, 500);
   }
 });
@@ -271,7 +294,7 @@ escrowRoutes.post('/:escrowId/release', async (c) => {
       status: 'released',
       txHash,
       mockMode: true,
-      explorerUrl: `https://sepolia.basescan.org/tx/${txHash}`,
+      explorerUrl: `https://sepolia.arbiscan.io/tx/${txHash}`,
       message: '🧪 Mock release. In production, USDC would transfer to provider on-chain.'
     });
   }
@@ -301,7 +324,7 @@ escrowRoutes.post('/:escrowId/release', async (c) => {
       escrowId,
       status: 'released',
       txHash,
-      explorerUrl: `https://sepolia.basescan.org/tx/${txHash}`,
+      explorerUrl: `https://sepolia.arbiscan.io/tx/${txHash}`,
       message: 'Payment released to provider!'
     });
   } catch (error: any) {
@@ -355,7 +378,7 @@ escrowRoutes.post('/:escrowId/refund', async (c) => {
       status: 'refunded',
       txHash,
       mockMode: true,
-      explorerUrl: `https://sepolia.basescan.org/tx/${txHash}`,
+      explorerUrl: `https://sepolia.arbiscan.io/tx/${txHash}`,
       message: '🧪 Mock refund. In production, USDC would return to client after timeout.'
     });
   }
@@ -416,7 +439,7 @@ escrowRoutes.post('/:escrowId/claim', async (c) => {
       status: 'claimed',
       txHash,
       mockMode: true,
-      explorerUrl: `https://sepolia.basescan.org/tx/${txHash}`,
+      explorerUrl: `https://sepolia.arbiscan.io/tx/${txHash}`,
       message: '🧪 Mock claim. In production, provider would receive USDC after client timeout.'
     });
   }

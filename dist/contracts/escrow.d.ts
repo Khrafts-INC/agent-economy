@@ -8,7 +8,7 @@
 import { type Address, type Hash } from 'viem';
 export declare const ADDRESSES: {
     USDC: Address;
-    ESCROW: `0x${string}`;
+    ESCROW: Address;
 };
 export declare const ESCROW_ABI: readonly [{
     readonly name: "createEscrow";
@@ -216,4 +216,9 @@ export declare function getEscrowDetails(escrowId: Hash): Promise<{
  * Check if contract is deployed and ready
  */
 export declare function isContractDeployed(): boolean;
+export declare const NETWORK: {
+    name: string;
+    chainId: number;
+    explorer: string;
+};
 export {};
