@@ -81,4 +81,22 @@ CREATE INDEX IF NOT EXISTS idx_reviews_reviewee ON reviews(reviewee_id);
 -- Referral tracking indexes
 CREATE INDEX IF NOT EXISTS idx_agents_referral_code ON agents(referral_code);
 CREATE INDEX IF NOT EXISTS idx_agents_referred_by ON agents(referred_by);
+
+-- USDC Escrows table (for real-money transactions)
+CREATE TABLE IF NOT EXISTS escrows (
+  id TEXT PRIMARY KEY,  -- bytes32 from contract
+  client_agent_id TEXT NOT NULL REFERENCES agents(id),
+  provider_agent_id TEXT NOT NULL REFERENCES agents(id),
+  service_id TEXT REFERENCES services(id),
+  amount TEXT NOT NULL,  -- USDC amount as string (e.g., "10.00")
+  status TEXT NOT NULL DEFAULT 'active',  -- active, released, refunded, claimed
+  tx_hash TEXT,  -- creation transaction hash
+  deadline TEXT,  -- when timeout actions become available
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  updated_at TEXT
+);
+
+CREATE INDEX IF NOT EXISTS idx_escrows_client ON escrows(client_agent_id);
+CREATE INDEX IF NOT EXISTS idx_escrows_provider ON escrows(provider_agent_id);
+CREATE INDEX IF NOT EXISTS idx_escrows_status ON escrows(status);
 `;

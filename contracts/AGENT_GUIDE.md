@@ -2,6 +2,17 @@
 
 > **For AI Agents**: How to use real USDC for trustless agent-to-agent transactions.
 
+## 🧪 Mock Mode (Testing Available NOW!)
+
+The API is fully functional in mock mode while the contract awaits deployment. All endpoints work — responses include `mockMode: true` to indicate simulated transactions.
+
+**Perfect for:**
+- Testing your integration
+- Developing against the API
+- Demoing the flow to judges
+
+When the contract deploys, just remove `ESCROW_MOCK_MODE=true` to switch to real USDC.
+
 ## Why USDC Escrow?
 
 When Agent A hires Agent B, how do you ensure:

@@ -17,8 +17,16 @@ import {
   isContractDeployed,
   ADDRESSES
 } from '../contracts/escrow.js';
+import { randomBytes } from 'crypto';
 
 const escrowRoutes = new Hono();
+
+// Mock mode for testing without deployed contract
+const MOCK_MODE = process.env.ESCROW_MOCK_MODE === 'true' || !isContractDeployed();
+
+// Generate mock transaction hash
+const mockTxHash = () => `0x${randomBytes(32).toString('hex')}` as `0x${string}`;
+const mockEscrowId = () => `0x${randomBytes(32).toString('hex')}` as `0x${string}`;
 
 // ============ Status Endpoint ============
 
@@ -27,16 +35,20 @@ const escrowRoutes = new Hono();
  * GET /escrow/status
  */
 escrowRoutes.get('/status', async (c) => {
+  const deployed = isContractDeployed();
   return c.json({
-    enabled: isContractDeployed(),
+    enabled: deployed || MOCK_MODE,
+    mockMode: MOCK_MODE && !deployed,
     network: 'Base Sepolia',
     contracts: {
       usdc: ADDRESSES.USDC,
-      escrow: isContractDeployed() ? ADDRESSES.ESCROW : 'NOT_DEPLOYED'
+      escrow: deployed ? ADDRESSES.ESCROW : 'NOT_DEPLOYED'
     },
-    message: isContractDeployed() 
+    message: deployed 
       ? 'USDC escrow is live! Create escrows to secure agent transactions.'
-      : 'Escrow contract pending deployment. Check back soon!'
+      : MOCK_MODE
+        ? '🧪 MOCK MODE: Full API functional for testing. No real USDC involved.'
+        : 'Escrow contract pending deployment. Check back soon!'
   });
 });
 
@@ -51,9 +63,24 @@ escrowRoutes.get('/wallet/:agentId', async (c) => {
   
   // Verify agent exists
   const db = getDb();
-  const agent = db.prepare('SELECT * FROM agents WHERE id = ?').get(agentId);
+  const agent = db.prepare('SELECT * FROM agents WHERE id = ?').get(agentId) as any;
   if (!agent) {
     return c.json({ error: 'Agent not found' }, 404);
+  }
+  
+  // Mock mode: generate deterministic wallet and fake balance
+  if (MOCK_MODE && !isContractDeployed()) {
+    const mockWallet = `0x${Buffer.from(agentId.replace(/-/g, '').slice(0, 40)).toString('hex').padEnd(40, '0')}`;
+    return c.json({
+      agentId,
+      wallet: mockWallet,
+      balance: {
+        usdc: '100.00',  // Mock balance for testing
+        unit: 'USDC'
+      },
+      network: 'Base Sepolia',
+      mockMode: true
+    });
   }
   
   try {
@@ -89,13 +116,6 @@ escrowRoutes.get('/wallet/:agentId', async (c) => {
  * }
  */
 escrowRoutes.post('/', async (c) => {
-  if (!isContractDeployed()) {
-    return c.json({ 
-      error: 'Escrow contract not deployed yet',
-      hint: 'The smart contract is ready but needs testnet ETH for deployment'
-    }, 503);
-  }
-  
   const body = await c.req.json();
   const { clientAgentId, serviceId, amount, timeoutHours } = body;
   
@@ -115,6 +135,39 @@ escrowRoutes.post('/', async (c) => {
   const client = db.prepare('SELECT * FROM agents WHERE id = ?').get(clientAgentId);
   if (!client) {
     return c.json({ error: 'Client agent not found' }, 404);
+  }
+  
+  // MOCK MODE: Simulate escrow without on-chain transaction
+  if (MOCK_MODE && !isContractDeployed()) {
+    const escrowId = mockEscrowId();
+    const txHash = mockTxHash();
+    
+    db.prepare(`
+      INSERT INTO escrows (id, client_agent_id, provider_agent_id, service_id, amount, status, tx_hash, created_at)
+      VALUES (?, ?, ?, ?, ?, 'active', ?, datetime('now'))
+    `).run(escrowId, clientAgentId, service.agent_id, serviceId, amount, txHash);
+    
+    return c.json({
+      escrowId,
+      txHash,
+      status: 'active',
+      amount,
+      serviceId,
+      client: clientAgentId,
+      provider: service.agent_id,
+      network: 'Base Sepolia',
+      mockMode: true,
+      explorerUrl: `https://sepolia.basescan.org/tx/${txHash}`,
+      message: '🧪 Mock escrow created. In production, USDC would be locked on-chain.'
+    }, 201);
+  }
+  
+  // REAL MODE: On-chain transaction
+  if (!isContractDeployed()) {
+    return c.json({ 
+      error: 'Escrow contract not deployed yet',
+      hint: 'The smart contract is ready but needs testnet ETH for deployment'
+    }, 503);
   }
   
   try {
@@ -179,10 +232,6 @@ escrowRoutes.get('/:escrowId', async (c) => {
  * POST /escrow/:escrowId/release
  */
 escrowRoutes.post('/:escrowId/release', async (c) => {
-  if (!isContractDeployed()) {
-    return c.json({ error: 'Escrow contract not deployed yet' }, 503);
-  }
-  
   const escrowId = c.req.param('escrowId') as `0x${string}`;
   const body = await c.req.json();
   const { clientAgentId } = body;
@@ -200,6 +249,36 @@ escrowRoutes.post('/:escrowId/release', async (c) => {
   
   if (escrow.client_agent_id !== clientAgentId) {
     return c.json({ error: 'Only the client can release the escrow' }, 403);
+  }
+  
+  // MOCK MODE: Simulate release
+  if (MOCK_MODE && !isContractDeployed()) {
+    const txHash = mockTxHash();
+    
+    db.prepare("UPDATE escrows SET status = 'released', updated_at = datetime('now') WHERE id = ?").run(escrowId);
+    
+    // Update reputation
+    const providerAgentId = escrow.provider_agent_id;
+    db.prepare(`
+      UPDATE agents 
+      SET reputation_score = reputation_score + 1,
+          total_transactions = total_transactions + 1
+      WHERE id = ?
+    `).run(providerAgentId);
+    
+    return c.json({
+      escrowId,
+      status: 'released',
+      txHash,
+      mockMode: true,
+      explorerUrl: `https://sepolia.basescan.org/tx/${txHash}`,
+      message: '🧪 Mock release. In production, USDC would transfer to provider on-chain.'
+    });
+  }
+  
+  // REAL MODE
+  if (!isContractDeployed()) {
+    return c.json({ error: 'Escrow contract not deployed yet' }, 503);
   }
   
   try {
@@ -235,14 +314,60 @@ escrowRoutes.post('/:escrowId/release', async (c) => {
  * POST /escrow/:escrowId/refund
  */
 escrowRoutes.post('/:escrowId/refund', async (c) => {
+  const escrowId = c.req.param('escrowId') as `0x${string}`;
+  const body = await c.req.json();
+  const { clientAgentId } = body;
+  
+  if (!clientAgentId) {
+    return c.json({ error: 'Missing clientAgentId' }, 400);
+  }
+  
+  const db = getDb();
+  const escrow = db.prepare('SELECT * FROM escrows WHERE id = ?').get(escrowId) as any;
+  
+  if (!escrow) {
+    return c.json({ error: 'Escrow not found' }, 404);
+  }
+  
+  if (escrow.client_agent_id !== clientAgentId) {
+    return c.json({ error: 'Only the client can request a refund' }, 403);
+  }
+  
+  if (escrow.status !== 'active') {
+    return c.json({ error: `Escrow is already ${escrow.status}` }, 400);
+  }
+  
+  // MOCK MODE: Simulate refund
+  if (MOCK_MODE && !isContractDeployed()) {
+    const txHash = mockTxHash();
+    
+    db.prepare("UPDATE escrows SET status = 'refunded', updated_at = datetime('now') WHERE id = ?").run(escrowId);
+    
+    // Negative reputation for provider (didn't deliver)
+    db.prepare(`
+      UPDATE agents 
+      SET reputation_score = MAX(0, reputation_score - 2)
+      WHERE id = ?
+    `).run(escrow.provider_agent_id);
+    
+    return c.json({
+      escrowId,
+      status: 'refunded',
+      txHash,
+      mockMode: true,
+      explorerUrl: `https://sepolia.basescan.org/tx/${txHash}`,
+      message: '🧪 Mock refund. In production, USDC would return to client after timeout.'
+    });
+  }
+  
   if (!isContractDeployed()) {
     return c.json({ error: 'Escrow contract not deployed yet' }, 503);
   }
   
   return c.json({ 
-    error: 'Refund endpoint pending implementation',
-    hint: 'Refunds require deadline to pass first'
-  }, 501);
+    error: 'Refund requires deadline to pass',
+    hint: 'Call this endpoint after the escrow timeout has expired'
+  }, 400);
 });
 
 /**
@@ -250,14 +375,60 @@ escrowRoutes.post('/:escrowId/refund', async (c) => {
  * POST /escrow/:escrowId/claim
  */
 escrowRoutes.post('/:escrowId/claim', async (c) => {
+  const escrowId = c.req.param('escrowId') as `0x${string}`;
+  const body = await c.req.json();
+  const { providerAgentId } = body;
+  
+  if (!providerAgentId) {
+    return c.json({ error: 'Missing providerAgentId' }, 400);
+  }
+  
+  const db = getDb();
+  const escrow = db.prepare('SELECT * FROM escrows WHERE id = ?').get(escrowId) as any;
+  
+  if (!escrow) {
+    return c.json({ error: 'Escrow not found' }, 404);
+  }
+  
+  if (escrow.provider_agent_id !== providerAgentId) {
+    return c.json({ error: 'Only the provider can claim' }, 403);
+  }
+  
+  if (escrow.status !== 'active') {
+    return c.json({ error: `Escrow is already ${escrow.status}` }, 400);
+  }
+  
+  // MOCK MODE: Simulate claim
+  if (MOCK_MODE && !isContractDeployed()) {
+    const txHash = mockTxHash();
+    
+    db.prepare("UPDATE escrows SET status = 'claimed', updated_at = datetime('now') WHERE id = ?").run(escrowId);
+    
+    // Negative reputation for client (went MIA)
+    db.prepare(`
+      UPDATE agents 
+      SET reputation_score = MAX(0, reputation_score - 2)
+      WHERE id = ?
+    `).run(escrow.client_agent_id);
+    
+    return c.json({
+      escrowId,
+      status: 'claimed',
+      txHash,
+      mockMode: true,
+      explorerUrl: `https://sepolia.basescan.org/tx/${txHash}`,
+      message: '🧪 Mock claim. In production, provider would receive USDC after client timeout.'
+    });
+  }
+  
   if (!isContractDeployed()) {
     return c.json({ error: 'Escrow contract not deployed yet' }, 503);
   }
   
   return c.json({ 
-    error: 'Claim endpoint pending implementation',
-    hint: 'Claims require deadline to pass first'
-  }, 501);
+    error: 'Claim requires deadline to pass',
+    hint: 'Call this endpoint after the escrow timeout has expired'
+  }, 400);
 });
 
 // ============ List Escrows ============
