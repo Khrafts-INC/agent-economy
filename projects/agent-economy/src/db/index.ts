@@ -43,7 +43,10 @@ function initSchema(db: Database.Database) {
       jobs_completed INTEGER DEFAULT 0,
       jobs_requested INTEGER DEFAULT 0,
       verified_at TEXT,
-      created_at TEXT NOT NULL
+      created_at TEXT NOT NULL,
+      referred_by TEXT REFERENCES agents(id),
+      referral_bonus_paid INTEGER DEFAULT 0,
+      last_job_completed_at TEXT
     );
     
     CREATE TABLE IF NOT EXISTS services (

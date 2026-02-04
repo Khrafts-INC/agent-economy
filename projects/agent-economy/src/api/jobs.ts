@@ -158,6 +158,38 @@ router.patch('/:id/deliver', (c) => {
   return c.json(updated);
 });
 
+const REFERRAL_BONUS = 10; // Both parties get 10🐚
+
+// Helper: process referral bonus if applicable
+function processReferralBonus(db: ReturnType<typeof getDb>, provider: any, now: string): { referrer?: string; bonusPaid: boolean } {
+  // First job ever for this agent AND they were referred AND bonus not yet paid?
+  if (provider.jobs_completed === 0 && provider.referred_by && !provider.referral_bonus_paid) {
+    const referrer = db.prepare('SELECT * FROM agents WHERE id = ?').get(provider.referred_by) as any;
+    
+    if (referrer) {
+      // Grant bonus to new agent
+      db.prepare('UPDATE agents SET balance = balance + ? WHERE id = ?').run(REFERRAL_BONUS, provider.id);
+      db.prepare(`
+        INSERT INTO transactions (id, from_agent_id, to_agent_id, amount, type, job_id, created_at)
+        VALUES (?, NULL, ?, ?, 'referral_bonus_new', NULL, ?)
+      `).run(uuidv4(), provider.id, REFERRAL_BONUS, now);
+      
+      // Grant bonus to referrer
+      db.prepare('UPDATE agents SET balance = balance + ? WHERE id = ?').run(REFERRAL_BONUS, referrer.id);
+      db.prepare(`
+        INSERT INTO transactions (id, from_agent_id, to_agent_id, amount, type, job_id, created_at)
+        VALUES (?, NULL, ?, ?, 'referral_bonus_referrer', NULL, ?)
+      `).run(uuidv4(), referrer.id, REFERRAL_BONUS, now);
+      
+      // Mark bonus as paid
+      db.prepare('UPDATE agents SET referral_bonus_paid = 1 WHERE id = ?').run(provider.id);
+      
+      return { referrer: referrer.name, bonusPaid: true };
+    }
+  }
+  return { bonusPaid: false };
+}
+
 // PATCH /jobs/:id/complete - Requester approves, releases escrow to provider
 router.patch('/:id/complete', (c) => {
   const id = c.req.param('id');
@@ -172,14 +204,25 @@ router.patch('/:id/complete', (c) => {
     return c.json({ error: `Cannot complete job in '${job.status}' status` }, 400);
   }
   
+  const provider = db.prepare('SELECT * FROM agents WHERE id = ?').get(job.provider_id) as any;
   const now = new Date().toISOString();
   const platformFee = Math.floor(job.agreed_price * PLATFORM_FEE_RATE);
   const providerPayout = job.agreed_price - platformFee;
   
+  let referralResult = { bonusPaid: false } as { referrer?: string; bonusPaid: boolean };
+  
   db.transaction(() => {
+    // Check and process referral bonus BEFORE incrementing jobs_completed
+    referralResult = processReferralBonus(db, provider, now);
+    
     // Pay the provider (minus fee)
-    db.prepare('UPDATE agents SET balance = balance + ?, jobs_completed = jobs_completed + 1 WHERE id = ?')
-      .run(providerPayout, job.provider_id);
+    db.prepare(`
+      UPDATE agents 
+      SET balance = balance + ?, 
+          jobs_completed = jobs_completed + 1,
+          last_job_completed_at = ?
+      WHERE id = ?
+    `).run(providerPayout, now, job.provider_id);
     
     // Record payment transaction
     db.prepare(`
@@ -200,13 +243,24 @@ router.patch('/:id/complete', (c) => {
   })();
   
   const updated = db.prepare('SELECT * FROM jobs WHERE id = ?').get(id) as Record<string, any>;
-  return c.json({ 
+  const response: Record<string, any> = { 
     ...updated, 
     payout: { 
       provider: providerPayout, 
       fee: platformFee 
     } 
-  });
+  };
+  
+  // Include referral info if bonus was paid
+  if (referralResult.bonusPaid) {
+    response.referral_bonus = {
+      amount: REFERRAL_BONUS,
+      referrer: referralResult.referrer,
+      message: `First job complete! Both you and ${referralResult.referrer} received ${REFERRAL_BONUS}🐚 referral bonus.`
+    };
+  }
+  
+  return c.json(response);
 });
 
 // PATCH /jobs/:id/cancel - Cancel job (only before acceptance)
