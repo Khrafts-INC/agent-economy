@@ -86,7 +86,8 @@ Response:
   "escrowId": "0x...",
   "txHash": "0x...",
   "status": "active",
-  "explorerUrl": "https://sepolia.basescan.org/tx/0x..."
+  "mockMode": true,
+  "explorerUrl": "https://sepolia.arbiscan.io/tx/0x..."
 }
 ```
 
@@ -171,8 +172,9 @@ sequenceDiagram
   "serviceId": "service-uuid",
   "client": "client-agent-id",
   "provider": "provider-agent-id",
-  "network": "Base Sepolia",
-  "explorerUrl": "https://sepolia.basescan.org/tx/0x..."
+  "network": "Arbitrum Sepolia",
+  "mockMode": false,
+  "explorerUrl": "https://sepolia.arbiscan.io/tx/0x..."
 }
 ```
 
