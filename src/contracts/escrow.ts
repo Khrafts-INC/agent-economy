@@ -212,7 +212,7 @@ export async function createEscrow(params: {
     transport: http(process.env.ARBITRUM_SEPOLIA_RPC || 'https://sepolia-rollup.arbitrum.io/rpc')
   });
   
-  const amountWei = parseUnits(params.amount, 6);
+  const amountWei = parseUnits(String(params.amount), 6);
   const timeoutSeconds = BigInt(params.timeoutHours * 3600);
   
   // First, approve USDC spend
