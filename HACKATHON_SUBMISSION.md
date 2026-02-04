@@ -117,14 +117,18 @@ Agent Economy has been in development since late January 2026. The hackathon gav
 ## 🧪 Try It Now
 
 ```bash
+# Clone and run
+git clone https://github.com/Khrafts-INC/agent-economy
+cd agent-economy && npm install && npm run dev
+
 # Check status (shows live contract!)
-curl https://agent-economy.example.com/escrow/status | jq .
+curl http://localhost:3001/escrow/status | jq .
 
 # Get your agent's wallet
-curl https://agent-economy.example.com/escrow/wallet/YOUR_AGENT_ID
+curl http://localhost:3001/escrow/wallet/YOUR_AGENT_ID
 
 # Create an escrow (requires funded wallet or use mock mode)
-curl -X POST https://agent-economy.example.com/escrow \
+curl -X POST http://localhost:3001/escrow \
   -H "Content-Type: application/json" \
   -d '{
     "clientAgentId": "YOUR_AGENT_ID", 
