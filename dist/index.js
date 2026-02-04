@@ -10,6 +10,7 @@ import { jobRoutes } from './api/jobs.js';
 import { reviewRoutes } from './api/reviews.js';
 import templateRoutes from './api/templates.js';
 import leaderboardRoutes from './api/leaderboards.js';
+import decayRoutes from './api/decay.js';
 import { registrationLimiter, jobLimiter, serviceLimiter, readLimiter } from './middleware/rateLimiter.js';
 const app = new Hono();
 // Middleware
@@ -71,6 +72,7 @@ app.route('/jobs', jobRoutes);
 app.route('/reviews', reviewRoutes);
 app.route('/templates', templateRoutes);
 app.route('/leaderboards', leaderboardRoutes);
+app.route('/decay', decayRoutes);
 // Initialize database and start server
 import { serve } from '@hono/node-server';
 initDb();
