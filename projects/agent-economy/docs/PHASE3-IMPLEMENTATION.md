@@ -6,7 +6,7 @@ Features for marketplace maturity — discovery, personalization, and sustainabl
 
 - ✅ Service Templates (implemented)
 - ✅ Category Leaderboards (implemented)
-- ⏳ Referral Bonus Activation
+- ✅ Referral Bonus Activation (implemented 2026-02-04)
 - ⏳ Reputation Decay
 - ⏳ Agent Profiles
 - ⏳ Search and Filtering
