@@ -10,8 +10,10 @@ import { getDb } from '../db/index.js';
 import { createEscrow, releaseEscrow, getEscrowDetails, getUSDCBalance, getAgentWallet, isContractDeployed, ADDRESSES, NETWORK } from '../contracts/escrow.js';
 import { randomBytes } from 'crypto';
 const escrowRoutes = new Hono();
-// Mock mode for testing without deployed contract
-const MOCK_MODE = process.env.ESCROW_MOCK_MODE === 'true' || !isContractDeployed();
+// Mock mode for testing without real transactions
+// Force mock mode with ESCROW_MOCK_MODE=true (even if contract is deployed)
+const FORCE_MOCK = process.env.ESCROW_MOCK_MODE === 'true';
+const MOCK_MODE = FORCE_MOCK || !isContractDeployed();
 // Generate mock transaction hash
 const mockTxHash = () => `0x${randomBytes(32).toString('hex')}`;
 const mockEscrowId = () => `0x${randomBytes(32).toString('hex')}`;
@@ -24,7 +26,7 @@ escrowRoutes.get('/status', async (c) => {
     const deployed = isContractDeployed();
     return c.json({
         enabled: deployed || MOCK_MODE,
-        mockMode: MOCK_MODE && !deployed,
+        mockMode: FORCE_MOCK || !deployed,
         network: NETWORK.name,
         chainId: NETWORK.chainId,
         explorer: NETWORK.explorer,
@@ -54,7 +56,7 @@ escrowRoutes.get('/wallet/:agentId', async (c) => {
         return c.json({ error: 'Agent not found' }, 404);
     }
     // Mock mode: generate deterministic wallet and fake balance
-    if (MOCK_MODE && !isContractDeployed()) {
+    if (FORCE_MOCK) {
         const mockWallet = `0x${Buffer.from(agentId.replace(/-/g, '').slice(0, 40)).toString('hex').padEnd(40, '0')}`;
         return c.json({
             agentId,
@@ -115,7 +117,7 @@ escrowRoutes.post('/', async (c) => {
         return c.json({ error: 'Client agent not found' }, 404);
     }
     // MOCK MODE: Simulate escrow without on-chain transaction
-    if (MOCK_MODE && !isContractDeployed()) {
+    if (FORCE_MOCK) {
         const escrowId = mockEscrowId();
         const txHash = mockTxHash();
         db.prepare(`
@@ -233,7 +235,7 @@ escrowRoutes.post('/:escrowId/release', async (c) => {
         return c.json({ error: 'Only the client can release the escrow' }, 403);
     }
     // MOCK MODE: Simulate release
-    if (MOCK_MODE && !isContractDeployed()) {
+    if (FORCE_MOCK) {
         const txHash = mockTxHash();
         db.prepare("UPDATE escrows SET status = 'released', updated_at = datetime('now') WHERE id = ?").run(escrowId);
         // Update reputation
@@ -305,7 +307,7 @@ escrowRoutes.post('/:escrowId/refund', async (c) => {
         return c.json({ error: `Escrow is already ${escrow.status}` }, 400);
     }
     // MOCK MODE: Simulate refund
-    if (MOCK_MODE && !isContractDeployed()) {
+    if (FORCE_MOCK) {
         const txHash = mockTxHash();
         db.prepare("UPDATE escrows SET status = 'refunded', updated_at = datetime('now') WHERE id = ?").run(escrowId);
         // Negative reputation for provider (didn't deliver)
@@ -354,7 +356,7 @@ escrowRoutes.post('/:escrowId/claim', async (c) => {
         return c.json({ error: `Escrow is already ${escrow.status}` }, 400);
     }
     // MOCK MODE: Simulate claim
-    if (MOCK_MODE && !isContractDeployed()) {
+    if (FORCE_MOCK) {
         const txHash = mockTxHash();
         db.prepare("UPDATE escrows SET status = 'claimed', updated_at = datetime('now') WHERE id = ?").run(escrowId);
         // Negative reputation for client (went MIA)
