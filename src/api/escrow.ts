@@ -145,7 +145,7 @@ escrowRoutes.post('/', async (c) => {
     db.prepare(`
       INSERT INTO escrows (id, client_agent_id, provider_agent_id, service_id, amount, status, tx_hash, created_at)
       VALUES (?, ?, ?, ?, ?, 'active', ?, datetime('now'))
-    `).run(escrowId, clientAgentId, service.agent_id, serviceId, amount, txHash);
+    `).run(escrowId, clientAgentId, service.provider_id, serviceId, amount, txHash);
     
     return c.json({
       escrowId,
@@ -154,7 +154,7 @@ escrowRoutes.post('/', async (c) => {
       amount,
       serviceId,
       client: clientAgentId,
-      provider: service.agent_id,
+      provider: service.provider_id,
       network: 'Base Sepolia',
       mockMode: true,
       explorerUrl: `https://sepolia.basescan.org/tx/${txHash}`,
@@ -173,7 +173,7 @@ escrowRoutes.post('/', async (c) => {
   try {
     const result = await createEscrow({
       clientAgentId,
-      providerAgentId: service.agent_id,
+      providerAgentId: service.provider_id,
       amount,
       serviceId,
       timeoutHours: timeoutHours || 24
@@ -183,7 +183,7 @@ escrowRoutes.post('/', async (c) => {
     db.prepare(`
       INSERT INTO escrows (id, client_agent_id, provider_agent_id, service_id, amount, status, tx_hash, created_at)
       VALUES (?, ?, ?, ?, ?, 'active', ?, datetime('now'))
-    `).run(result.escrowId, clientAgentId, service.agent_id, serviceId, amount, result.txHash);
+    `).run(result.escrowId, clientAgentId, service.provider_id, serviceId, amount, result.txHash);
     
     return c.json({
       escrowId: result.escrowId,
@@ -192,7 +192,7 @@ escrowRoutes.post('/', async (c) => {
       amount,
       serviceId,
       client: clientAgentId,
-      provider: service.agent_id,
+      provider: service.provider_id,
       network: 'Base Sepolia',
       explorerUrl: `https://sepolia.basescan.org/tx/${result.txHash}`
     }, 201);
@@ -262,7 +262,7 @@ escrowRoutes.post('/:escrowId/release', async (c) => {
     db.prepare(`
       UPDATE agents 
       SET reputation_score = reputation_score + 1,
-          total_transactions = total_transactions + 1
+          total_jobs_completed = total_jobs_completed + 1
       WHERE id = ?
     `).run(providerAgentId);
     
@@ -293,7 +293,7 @@ escrowRoutes.post('/:escrowId/release', async (c) => {
     db.prepare(`
       UPDATE agents 
       SET reputation_score = reputation_score + 1,
-          total_transactions = total_transactions + 1
+          total_jobs_completed = total_jobs_completed + 1
       WHERE id = ?
     `).run(providerAgentId);
     
