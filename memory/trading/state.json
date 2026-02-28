@@ -1,61 +1,313 @@
 {
-  "lastScan": "2026-02-28T16:25:00Z",
+  "lastScan": "2026-02-28T22:25:00Z",
   "account": {
-    "balance": 874.75,
-    "openPositions": [],
+    "balance": 858.17,
+    "openPositions": [
+      {
+        "asset": "DOGE",
+        "direction": "SHORT",
+        "entry": 0.093637,
+        "size": 16098,
+        "sl": 0.0955,
+        "tp1": 0.0906,
+        "tp2": 0.089,
+        "tp1Size": 8049,
+        "tp2Size": 8049,
+        "tp1Hit": false,
+        "slOid": 49311845552,
+        "tp1Oid": 49311846500,
+        "openedAt": "2026-02-28T20:25:00Z",
+        "riskPerUnit": 0.001863,
+        "totalRisk": 29.99,
+        "riskPct": 3.4,
+        "leverage": "1.7x",
+        "rationale": "Daily+4H bearish aligned. Price rejected at 4H EMA20 (0.0939). Entry zone confirmed.",
+        "alignmentLostAt": "2026-02-28T21:25:00Z",
+        "alignmentNote": "Daily BEARISH but 4H NEUTRAL. Waiting for 4H close at 00:00 UTC to confirm.",
+        "next4HClose": "2026-03-01T00:00:00Z"
+      },
+      {
+        "asset": "ETH",
+        "direction": "SHORT",
+        "entry": 1914.27,
+        "size": 0.78,
+        "sl": 1955,
+        "tp1": 1833,
+        "tp1Size": 0.39,
+        "tp2Size": 0.39,
+        "tp1Hit": false,
+        "slOid": 49318073338,
+        "tp1Oid": 49318075022,
+        "openedAt": "2026-02-28T22:25:00Z",
+        "riskPerUnit": 40.73,
+        "totalRisk": 31.77,
+        "riskPct": 3.7,
+        "leverage": "1.7x",
+        "rationale": "Daily+4H aligned bearish. Price at 4H EMA20 (~1929) rejection zone. Clean LH/LL both timeframes."
+      },
+      {
+        "asset": "AAVE",
+        "direction": "SHORT",
+        "entry": 111.9495,
+        "size": 7.0,
+        "sl": 115.5,
+        "tp1": 105.0,
+        "tp1Size": 3.5,
+        "tp2Size": 3.5,
+        "tp1Hit": false,
+        "slOid": 49318036341,
+        "tp1Oid": 49318036769,
+        "openedAt": "2026-02-28T22:25:00Z",
+        "riskPerUnit": 3.55,
+        "totalRisk": 24.85,
+        "riskPct": 2.9,
+        "leverage": "0.9x",
+        "rationale": "Daily+4H aligned bearish. Price at 4H EMA20 (112.55) rejection zone. LH/LL structure confirmed."
+      }
+    ],
     "closedToday": [
-      {"asset": "BTC", "direction": "SHORT", "entry": 66149.7, "exit": 67550, "pnl": -26.88, "reason": "SL hit"},
-      {"asset": "PAXG", "direction": "LONG", "type": "TP1 partial", "entry": 5207.64, "exit": 5327, "size": 0.212, "pnl": "+25.30"},
-      {"asset": "PAXG", "direction": "LONG", "type": "TP2 runner", "entry": 5207.64, "exit": 5387, "size": 0.211, "pnl": "+37.85", "reason": "TP2 hit"},
-      {"asset": "WIF", "direction": "SHORT", "type": "TP1 partial", "entry": 0.20858, "exit": 0.1967, "size": 1914, "pnl": "+22.74"},
-      {"asset": "WIF", "direction": "SHORT", "type": "TP2 runner", "entry": 0.20858, "exit": 0.1908, "size": 1914, "pnl": "+34.03", "reason": "TP2 hit"},
-      {"asset": "DOGE", "direction": "SHORT", "type": "TP1 partial", "entry": 0.092965, "exit": 0.0868, "size": 5890, "pnl": "+36.33"},
-      {"asset": "DOGE", "direction": "SHORT", "type": "Runner SL (BE+)", "entry": 0.092965, "exit": 0.0913, "size": 5891, "pnl": "+9.81", "reason": "SL hit at breakeven+ trail"},
-      {"asset": "SOL", "direction": "SHORT", "entry": 80.205, "exit": 80.8736, "size": 24.9, "pnl": -16.64, "reason": "Rule 11 structure confirmed - 4H bounce"},
-      {"asset": "DOGE", "direction": "SHORT", "entry": 0.090023, "exit": 0.090568, "size": 15941, "pnl": -8.69, "reason": "Rule 11 structure confirmed - 4H bounce"}
+      {
+        "asset": "BTC",
+        "direction": "SHORT",
+        "entry": 66149.7,
+        "exit": 67550,
+        "pnl": -26.88,
+        "reason": "SL hit"
+      },
+      {
+        "asset": "PAXG",
+        "direction": "LONG",
+        "type": "TP1 partial",
+        "entry": 5207.64,
+        "exit": 5327,
+        "size": 0.212,
+        "pnl": "+25.30"
+      },
+      {
+        "asset": "PAXG",
+        "direction": "LONG",
+        "type": "TP2 runner",
+        "entry": 5207.64,
+        "exit": 5387,
+        "size": 0.211,
+        "pnl": "+37.85",
+        "reason": "TP2 hit"
+      },
+      {
+        "asset": "WIF",
+        "direction": "SHORT",
+        "type": "TP1 partial",
+        "entry": 0.20858,
+        "exit": 0.1967,
+        "size": 1914,
+        "pnl": "+22.74"
+      },
+      {
+        "asset": "WIF",
+        "direction": "SHORT",
+        "type": "TP2 runner",
+        "entry": 0.20858,
+        "exit": 0.1908,
+        "size": 1914,
+        "pnl": "+34.03",
+        "reason": "TP2 hit"
+      },
+      {
+        "asset": "DOGE",
+        "direction": "SHORT",
+        "type": "TP1 partial",
+        "entry": 0.092965,
+        "exit": 0.0868,
+        "size": 5890,
+        "pnl": "+36.33"
+      },
+      {
+        "asset": "DOGE",
+        "direction": "SHORT",
+        "type": "Runner SL (BE+)",
+        "entry": 0.092965,
+        "exit": 0.0913,
+        "size": 5891,
+        "pnl": "+9.81",
+        "reason": "SL hit at breakeven+ trail"
+      },
+      {
+        "asset": "SOL",
+        "direction": "SHORT",
+        "entry": 80.205,
+        "exit": 80.8736,
+        "size": 24.9,
+        "pnl": -16.64,
+        "reason": "Rule 11 structure confirmed - 4H bounce"
+      },
+      {
+        "asset": "DOGE",
+        "direction": "SHORT",
+        "entry": 0.090023,
+        "exit": 0.090568,
+        "size": 15941,
+        "pnl": -8.69,
+        "reason": "Rule 11 structure confirmed - 4H bounce"
+      }
     ],
     "dailyPnL": 113.85
   },
   "assets": {
-    "BTC": {"price": 64341, "dailyTrend": "neutral", "h4Trend": "bearish", "aligned": false, "note": "Daily MIXED struct, 4H bearish"},
-    "ETH": {"price": 1857, "dailyTrend": "neutral", "h4Trend": "bearish", "aligned": false},
-    "SOL": {"price": 80.9, "dailyTrend": "neutral", "h4Trend": "neutral", "aligned": false},
-    "DOGE": {"price": 0.0905, "dailyTrend": "neutral", "h4Trend": "bearish", "aligned": false},
-    "PAXG": {"price": 5411, "dailyTrend": "neutral", "h4Trend": "neutral", "aligned": false, "note": "Lost alignment — MIXED structure on both TFs despite being above EMAs"},
-    "AAVE": {"price": 107.0, "dailyTrend": "neutral", "h4Trend": "bearish", "aligned": false},
-    "SUI": {"price": 0.853, "dailyTrend": "bearish", "h4Trend": "bearish", "aligned": true, "direction": "BEARISH", "note": "Only Tier 1 aligned. Watch for retest of 1H EMA20 ~0.866"},
-    "AVAX": {"price": 8.65, "dailyTrend": "neutral", "h4Trend": "bearish", "aligned": false},
-    "ADA": {"price": 0.267, "dailyTrend": "neutral", "h4Trend": "neutral", "aligned": false},
-    "PENDLE": {"price": 1.217, "dailyTrend": "bearish", "h4Trend": "neutral", "aligned": false},
-    "NEAR": {"price": 1.070, "dailyTrend": "neutral", "h4Trend": "neutral", "aligned": false},
-    "WIF": {"price": 0.183, "dailyTrend": "bearish", "h4Trend": "neutral", "aligned": false, "note": "RSI 14.7 deeply oversold"},
-    "INJ": {"price": 2.96, "dailyTrend": "neutral", "h4Trend": "bearish", "aligned": false},
-    "FIL": {"price": 0.945, "dailyTrend": "neutral", "h4Trend": "neutral", "aligned": false},
-    "ARB": {"price": 0.093, "dailyTrend": "bearish", "h4Trend": "neutral", "aligned": false},
-    "TAO": {"price": 173.9, "dailyTrend": "neutral", "h4Trend": "neutral", "aligned": false, "note": "Tier 3"},
-    "TIA": {"price": 0.305, "dailyTrend": "neutral", "h4Trend": "bearish", "aligned": false, "note": "Tier 3"},
-    "LDO": {"price": 0.289, "dailyTrend": "bearish", "h4Trend": "neutral", "aligned": false, "note": "Tier 3"},
-    "FET": {"price": 0.148, "dailyTrend": "neutral", "h4Trend": "neutral", "aligned": false, "note": "Tier 3 — lost alignment"},
-    "OP": {"price": 0.113, "dailyTrend": "bearish", "h4Trend": "bearish", "aligned": true, "direction": "BEARISH", "note": "Tier 3 — aligned but $3K vol too thin"},
-    "POL": {"price": 0.104, "dailyTrend": "neutral", "h4Trend": "bearish", "aligned": false, "note": "Too thin — skip"}
+    "BTC": {
+      "price": 65167,
+      "dailyTrend": "neutral",
+      "h4Trend": "bearish",
+      "aligned": false
+    },
+    "ETH": {
+      "price": 1921.5,
+      "dailyTrend": "bearish",
+      "h4Trend": "bearish",
+      "aligned": true,
+      "direction": "bearish",
+      "note": "ACTIVE SHORT at 1914.27"
+    },
+    "SOL": {
+      "price": 84.67,
+      "dailyTrend": "neutral",
+      "h4Trend": "neutral",
+      "aligned": false
+    },
+    "DOGE": {
+      "price": 0.09409,
+      "dailyTrend": "bearish",
+      "h4Trend": "neutral",
+      "aligned": false,
+      "note": "ACTIVE SHORT \u2014 alignment lost since 21:25Z (1hr). Cooldown continues."
+    },
+    "PAXG": {
+      "price": 5387,
+      "dailyTrend": "neutral",
+      "h4Trend": "bullish",
+      "aligned": false,
+      "note": "Daily struct conflicting. 4H strongly bullish."
+    },
+    "AAVE": {
+      "price": 111.97,
+      "dailyTrend": "bearish",
+      "h4Trend": "bearish",
+      "aligned": true,
+      "direction": "bearish",
+      "note": "ACTIVE SHORT at 111.95"
+    },
+    "SUI": {
+      "price": 0.9065,
+      "dailyTrend": "bearish",
+      "h4Trend": "neutral",
+      "aligned": false
+    },
+    "AVAX": {
+      "price": 9.18,
+      "dailyTrend": "neutral",
+      "h4Trend": "neutral",
+      "aligned": false
+    },
+    "ADA": {
+      "price": 0.279,
+      "dailyTrend": "neutral",
+      "h4Trend": "bullish",
+      "aligned": false
+    },
+    "PENDLE": {
+      "price": 1.283,
+      "dailyTrend": "neutral",
+      "h4Trend": "neutral",
+      "aligned": false
+    },
+    "NEAR": {
+      "price": 1.163,
+      "dailyTrend": "neutral",
+      "h4Trend": "neutral",
+      "aligned": false,
+      "note": "RSI 76.7 overbought spike"
+    },
+    "WIF": {
+      "price": 0.1946,
+      "dailyTrend": "bearish",
+      "h4Trend": "bearish",
+      "aligned": true,
+      "direction": "bearish",
+      "note": "No entry \u2014 price well below 4H EMA20"
+    },
+    "INJ": {
+      "price": 2.985,
+      "dailyTrend": "neutral",
+      "h4Trend": "bearish",
+      "aligned": false
+    },
+    "FIL": {
+      "price": 0.991,
+      "dailyTrend": "neutral",
+      "h4Trend": "neutral",
+      "aligned": false
+    },
+    "ARB": {
+      "price": 0.0983,
+      "dailyTrend": "bearish",
+      "h4Trend": "neutral",
+      "aligned": false
+    },
+    "TAO": {
+      "price": 182.29,
+      "dailyTrend": "neutral",
+      "h4Trend": "neutral",
+      "aligned": false
+    },
+    "TIA": {
+      "price": 0.3254,
+      "dailyTrend": "neutral",
+      "h4Trend": "neutral",
+      "aligned": false
+    },
+    "LDO": {
+      "price": 0.3028,
+      "dailyTrend": "bearish",
+      "h4Trend": "neutral",
+      "aligned": false
+    },
+    "FET": {
+      "price": 0.1547,
+      "dailyTrend": "bearish",
+      "h4Trend": "bearish",
+      "aligned": true,
+      "direction": "bearish",
+      "note": "Tier 3, low liquidity \u2014 watching only"
+    },
+    "OP": {
+      "price": 0.1196,
+      "dailyTrend": "bearish",
+      "h4Trend": "neutral",
+      "aligned": false
+    },
+    "POL": {
+      "price": 0.1045,
+      "dailyTrend": "bearish",
+      "h4Trend": "neutral",
+      "aligned": false
+    }
   },
   "sentimentHistory": [
     {
-      "time": "2026-02-28T16:25:00Z",
-      "summary": "2/21 aligned (SUI bearish T1, OP bearish T3). PAXG lost alignment — Daily+4H structure both MIXED. Market in transition/chop post-bounce. No new trades. Account $874.75, daily P&L +$113.85."
+      "time": "2026-02-28T22:25:00Z",
+      "summary": "4/21 aligned bearish (ETH, AAVE, WIF, FET). Opened ETH short at 1914.27 and AAVE short at 111.95 \u2014 both at 4H EMA20 rejection zones. DOGE alignment lost 1hr \u2014 monitoring Rule 11 cooldown. Now at 3/3 positions. Account $858, realized daily P&L +$113.85."
     },
     {
-      "time": "2026-02-28T15:55:00Z",
-      "summary": "MAJOR REGIME SHIFT. 4H bouncing across the board — only 2/21 aligned (PAXG bullish, FET bearish Tier 3). Closed SOL short -$16.64 and DOGE short -$8.69 per Rule 11."
+      "time": "2026-02-28T21:25:00Z",
+      "summary": "3/21 aligned bearish (AAVE, WIF, INJ). Down from 6 last scan. DOGE alignment lost \u2014 Rule 11 cooldown started."
     },
     {
-      "time": "2026-02-28T15:25:00Z",
-      "summary": "7/21 aligned (1 bullish PAXG, 6 bearish: AAVE/SUI/WIF/LDO/FET/OP). SOL+DOGE 4H shifted neutral — WARNING scan 1."
+      "time": "2026-02-28T20:25:00Z",
+      "summary": "6/21 aligned bearish (ETH, DOGE, AAVE, WIF, LDO, FET). Opened DOGE short at 0.093637."
     }
   ],
   "scanFrequency": {
     "currentTier": "1hr",
-    "reason": "2 aligned (1 tradeable), 0 open positions. Standard monitoring.",
+    "reason": "4 aligned assets + 3 open positions including Rule 11 cooldown. Standard monitoring.",
     "consecutiveNoAlignment": 0
   },
   "methodologyVersion": "2026-02-28-v2",

@@ -226,18 +226,29 @@ If Daily+4H are aligned, there's a key level, and R:R is ≥1:2 (with the 10% fl
 
 **Why this changed:** Early testnet trades taken on "borderline" alignment (DOGE, first PAXG, first AAVE on Feb 25-26) were ALL losers. The data is clear: borderline = bad. The whole point of paper trading is to build habits that transfer to live. Sloppy paper trading builds sloppy habits.
 
-### RULE 11: Structure Change Cooldown — TIME-BASED (updated Feb 28 2026)
+### RULE 11: Structure Change Cooldown — 4H CANDLE CLOSE (updated Feb 28 2026)
 
-**Structure invalidation requires ≥2 HOURS of lost alignment to confirm, regardless of scan frequency.**
+**Structure invalidation is only confirmed on the next 4H candle close, not mid-candle.**
 
-- First scan showing alignment lost = **WARNING** — log the timestamp, don't act yet
-- Continue monitoring on normal scan schedule
-- **Only close the position if alignment has been lost for ≥2 continuous hours** (check the WARNING timestamp vs current time)
-- If alignment recovers at ANY scan before 2 hours = **FALSE ALARM** — discard the warning, reset timer
+4H candle boundaries: 00:00, 04:00, 08:00, 12:00, 16:00, 20:00 UTC.
 
-**How to track:** When alignment breaks, record `alignmentLostAt: <ISO timestamp>` on the position in state.json. Each subsequent scan checks: `now - alignmentLostAt >= 2 hours`? If yes → CONFIRMED, close. If alignment recovers → delete `alignmentLostAt`.
+**Process:**
+1. Scan detects alignment lost (e.g., 4H structure flipped neutral) → **WARNING** — log `alignmentLostAt` timestamp on the position in state.json. Do NOT close.
+2. Continue monitoring on normal scan schedule.
+3. **At or after the next 4H candle close**, re-evaluate 4H structure using the completed candle:
+   - 4H structure still broken → **CONFIRMED** — close the position.
+   - 4H structure recovered on close → **FALSE ALARM** — delete `alignmentLostAt`, reset.
+4. If alignment recovers at ANY scan before the 4H close → **FALSE ALARM** — reset immediately.
 
-**Why time-based, not scan-based:** When we introduced adaptive scan frequency (Rule 12), scan-based cooldowns broke. At 30-min scans, "2 consecutive scans" = only 1 hour — half the grace period of hourly scans. SOL and DOGE positions were closed at -$16.64 and -$8.69 after just 1 hour during a temporary 4H bounce. Time-based ensures positions get the same grace period regardless of how frequently we scan.
+**How to track in state.json:**
+- `alignmentLostAt`: ISO timestamp when alignment first broke
+- `next4HClose`: the next 4H boundary after `alignmentLostAt` (e.g., if lost at 21:25, next4HClose = "2026-02-29T00:00:00Z")
+- On each scan: if `now >= next4HClose` AND alignment still lost → CONFIRMED, close.
+
+**Why 4H candle close, not a fixed timer:**
+- Our entry thesis is built on 4H structure. We should confirm structure *changes* on 4H closes too — not arbitrary time windows.
+- Mid-candle wicks can temporarily pierce EMA20 and look like a structure break, then recover by close. This is noise, not signal.
+- The SL protects us from adverse price moves regardless. Rule 11 is about thesis invalidation, not risk management.
 
 **Exception:** If price hits SL, exit immediately regardless of cooldown. SL is always honored.
 
@@ -307,7 +318,7 @@ Every scan:
 6. Verify leverage ≤ 5x
 7. **Check position limit:** Base 3, or Tier 2 (up to 5) if broad alignment + existing positions risk-free (Rule 7)
 8. Write analysis to `memory/trading/YYYY-MM-DD.md`
-9. If in a trade → check TP1/TP2/trailing stop management. Apply TIME-BASED structure cooldown (Rule 11): check `alignmentLostAt` timestamp, only close if ≥2 hours have elapsed.
+9. If in a trade → check TP1/TP2/trailing stop management. Apply 4H CANDLE CLOSE cooldown (Rule 11): if alignment lost, only confirm closure at or after the next 4H candle close (00/04/08/12/16/20 UTC).
 10. Update `memory/trading/state.json` including current scan frequency tier
 11. **Set next scan interval** per Rule 12 based on alignment count and position proximity to TP
 
