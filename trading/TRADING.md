@@ -6,23 +6,42 @@ Goal: Consistent profit through trend-following with strict risk management.
 
 ## Assets Monitored
 
-### Core Watchlist
-- **BTC** (Bitcoin perpetual)
-- **ETH** (Ethereum perpetual)
-- **SOL** (Solana perpetual)
-- **PAXG** (Gold proxy — tracks XAU/USD closely)
+### Tier 1 — High Liquidity (24h vol >$100K on testnet)
+- **BTC** — $2.8M vol, king of liquidity
+- **ETH** — $1.5M vol
+- **SOL** — $398K vol
+- **DOGE** — $118K vol, trends hard
+- **PAXG** — gold proxy, $17K vol but deep OI ($266K). Our edge asset
+- **AAVE** — $103K vol, DeFi blue chip
+- **SUI** — $181K vol, alt L1
+- **AVAX** — $54K vol
+- **ADA** — $31K vol, large cap
 
-### Extended Watchlist (scan for trend-aligned setups)
-- **DOGE** (meme leader, trends hard when it moves)
-- **AVAX** (L1, good liquidity)
-- **~~LINK~~** — not available on Hyperliquid testnet
-- **ARB** (L2 leader)
-- **MATIC/POL** (L2)
-- **AAVE** (DeFi blue chip)
-- **WIF** (meme/momentum)
-- **PENDLE** (DeFi/yield narrative)
+### Tier 2 — Moderate Liquidity (>$5K vol or strong OI)
+- **PENDLE** — $14K vol, $89K OI, DeFi/yield narrative
+- **NEAR** — $14K vol, $119K OI, alt L1
+- **WIF** — $26K vol, meme/momentum (proven winner for us)
+- **INJ** — $12K vol, cosmos DeFi
+- **FIL** — $9K vol, storage narrative
+- **ARB** — $7K vol, $76K OI, L2 leader
 
-*Expand this list as we discover more trending assets. The goal is a wide net — only trade what's cleanly trending.*
+### Tier 3 — Lower Liquidity (watch only, trade if alignment is pristine)
+- **TAO** — $5K vol but $150K OI, AI narrative
+- **TIA** — $4K vol, $33K OI, modular/DA
+- **LDO** — $3K vol, $39K OI, liquid staking
+- **FET** — $3K vol, $21K OI, AI
+- **OP** — $3K vol, $70K OI, L2
+- **POL** — $1K vol, skip for entries (too thin)
+
+### Not Available on Hyperliquid Testnet
+LINK, UNI, MKR, CRV — not listed
+
+### Dropped (insufficient liquidity)
+- RNDR (zero volume), TRB, HBAR, ONDO, POPCAT, TRUMP, ANIME, BERA, KAITO — all <$2K daily vol
+
+**Total: 21 assets monitored (15 tradeable, 6 watch-only)**
+
+*Quality per asset is NON-NEGOTIABLE. Same Daily+4H analysis depth for every single one. Wider net, same filter.*
 
 ### Forex Note
 Hyperliquid is crypto-only. No native forex pairs (EUR/USD, GBP/USD etc).
@@ -207,16 +226,20 @@ If Daily+4H are aligned, there's a key level, and R:R is ≥1:2 (with the 10% fl
 
 **Why this changed:** Early testnet trades taken on "borderline" alignment (DOGE, first PAXG, first AAVE on Feb 25-26) were ALL losers. The data is clear: borderline = bad. The whole point of paper trading is to build habits that transfer to live. Sloppy paper trading builds sloppy habits.
 
-### RULE 11: Structure Change Cooldown (added Feb 28 2026)
+### RULE 11: Structure Change Cooldown — TIME-BASED (updated Feb 28 2026)
 
-**Structure invalidation requires 2 consecutive scans to confirm.**
-- First scan showing structure change (e.g., HH/HL → LH/LL) = **WARNING** — log it, don't act yet
-- Second consecutive scan confirming the same change = **CONFIRMED** — act on it (close position, remove alignment)
-- If the second scan reverts to original structure = **FALSE ALARM** — discard the warning
+**Structure invalidation requires ≥2 HOURS of lost alignment to confirm, regardless of scan frequency.**
 
-**Why:** Single-scan structure flip-flops caused premature exits. PAXG was closed at -$3.43 on Feb 26 when structure briefly showed LH/LL, then immediately recovered. That position would have been +$120. One noisy swing point shouldn't override a multi-day trend.
+- First scan showing alignment lost = **WARNING** — log the timestamp, don't act yet
+- Continue monitoring on normal scan schedule
+- **Only close the position if alignment has been lost for ≥2 continuous hours** (check the WARNING timestamp vs current time)
+- If alignment recovers at ANY scan before 2 hours = **FALSE ALARM** — discard the warning, reset timer
 
-**Exception:** If price hits SL, exit immediately regardless of structure cooldown. SL is always honored.
+**How to track:** When alignment breaks, record `alignmentLostAt: <ISO timestamp>` on the position in state.json. Each subsequent scan checks: `now - alignmentLostAt >= 2 hours`? If yes → CONFIRMED, close. If alignment recovers → delete `alignmentLostAt`.
+
+**Why time-based, not scan-based:** When we introduced adaptive scan frequency (Rule 12), scan-based cooldowns broke. At 30-min scans, "2 consecutive scans" = only 1 hour — half the grace period of hourly scans. SOL and DOGE positions were closed at -$16.64 and -$8.69 after just 1 hour during a temporary 4H bounce. Time-based ensures positions get the same grace period regardless of how frequently we scan.
+
+**Exception:** If price hits SL, exit immediately regardless of cooldown. SL is always honored.
 
 ---
 
@@ -284,7 +307,7 @@ Every scan:
 6. Verify leverage ≤ 5x
 7. **Check position limit:** Base 3, or Tier 2 (up to 5) if broad alignment + existing positions risk-free (Rule 7)
 8. Write analysis to `memory/trading/YYYY-MM-DD.md`
-9. If in a trade → check TP1/TP2/trailing stop management. Apply structure cooldown (Rule 11) for any invalidation signals.
+9. If in a trade → check TP1/TP2/trailing stop management. Apply TIME-BASED structure cooldown (Rule 11): check `alignmentLostAt` timestamp, only close if ≥2 hours have elapsed.
 10. Update `memory/trading/state.json` including current scan frequency tier
 11. **Set next scan interval** per Rule 12 based on alignment count and position proximity to TP
 
