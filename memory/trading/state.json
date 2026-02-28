@@ -1,0 +1,289 @@
+{
+  "lastScan": "2026-02-28T06:25:00Z",
+  "account": {
+    "balance": 875.83,
+    "openPositions": [
+      {
+        "asset": "PAXG",
+        "direction": "LONG",
+        "entry": 5207.64,
+        "size": 0.211,
+        "sl": 5208,
+        "tp2": 5387,
+        "orderIds": {
+          "tp2": 49206577003,
+          "sl_be": 49269270362
+        },
+        "status": "TP1 HIT \u2014 runner active. SL at breakeven $5,208. Trailing with 1H EMA20. uPnL +$26.37.",
+        "openedAt": "2026-02-27T04:25:00Z",
+        "tp1Hit": true
+      },
+      {
+        "asset": "WIF",
+        "direction": "SHORT",
+        "entry": 0.20858,
+        "size": 1914,
+        "sl": 0.2086,
+        "tp2": 0.1908,
+        "orderIds": {
+          "tp2": 49238704682,
+          "sl_be": 49269271430
+        },
+        "status": "TP1 HIT \u2014 runner active. SL at breakeven $0.2086. Trailing with 1H EMA20. uPnL +$25.80.",
+        "openedAt": "2026-02-27T16:25:00Z",
+        "tp1Hit": true
+      },
+      {
+        "asset": "DOGE",
+        "direction": "SHORT",
+        "entry": 0.092965,
+        "size": 11781,
+        "sl": 0.096,
+        "tp1": 0.0868,
+        "tp2": 0.0838,
+        "orderIds": {
+          "sl": 49264663101,
+          "tp1": 49264663869,
+          "tp2": 49264664437
+        },
+        "status": "open \u2014 uPnL +$24.40 (+11.1% ROE). TP1 4.5% away. Strong bearish momentum.",
+        "openedAt": "2026-02-28T00:00:00Z"
+      }
+    ],
+    "closedToday": [
+      {
+        "asset": "BTC",
+        "direction": "SHORT",
+        "entry": 66149.7,
+        "exit": 67550,
+        "pnl": -26.88,
+        "reason": "SL hit"
+      },
+      {
+        "asset": "PAXG",
+        "direction": "LONG",
+        "type": "TP1 partial",
+        "entry": 5207.64,
+        "exit": 5327,
+        "size": 0.212,
+        "pnl": "~+$25 (estimated)"
+      },
+      {
+        "asset": "WIF",
+        "direction": "SHORT",
+        "type": "TP1 partial",
+        "entry": 0.20858,
+        "exit": 0.1967,
+        "size": 1914,
+        "pnl": "~+$22 (estimated)"
+      }
+    ],
+    "dailyPnL": 20.12
+  },
+  "assets": {
+    "BTC": {
+      "price": 64939,
+      "dailyTrend": "bearish",
+      "h4Trend": "bearish",
+      "aligned": true,
+      "keyLevels": {
+        "resistance": [
+          66000,
+          67200
+        ],
+        "support": [
+          64000,
+          63000
+        ]
+      },
+      "reasoning": "D: Massive downtrend 96k\u219284k\u219265k. P<E20<E50. BEARISH. 4H: 86k\u219285k\u219284k\u219280k\u2192declining. BEARISH. ALIGNED BEARISH."
+    },
+    "ETH": {
+      "price": 1891.75,
+      "dailyTrend": "bearish",
+      "h4Trend": "bearish",
+      "aligned": true,
+      "keyLevels": {
+        "resistance": [
+          1935,
+          2000
+        ],
+        "support": [
+          1870,
+          1830
+        ]
+      },
+      "reasoning": "D: 2818\u21922512\u21922494\u21922335\u21922307\u21921892. Steep downtrend. BEARISH. 4H: 2352\u21922291\u21922306\u21922146. BEARISH. ALIGNED BEARISH."
+    },
+    "SOL": {
+      "price": 80.23,
+      "dailyTrend": "bearish",
+      "h4Trend": "bearish",
+      "aligned": true,
+      "keyLevels": {
+        "resistance": [
+          82,
+          85
+        ],
+        "support": [
+          78,
+          75
+        ]
+      },
+      "reasoning": "D: 168\u2192142\u2192144\u2192135\u2192138\u219280. Freefall. BEARISH. 4H: 140\u2192137\u2192128\u2192declining. BEARISH. ALIGNED BEARISH."
+    },
+    "PAXG": {
+      "price": 5334.2,
+      "dailyTrend": "bullish",
+      "h4Trend": "bullish",
+      "aligned": true,
+      "keyLevels": {
+        "resistance": [
+          5387,
+          5450
+        ],
+        "support": [
+          5300,
+          5250
+        ]
+      },
+      "reasoning": "D: P>E20>E50, higher lows. BULLISH. 4H: same structure. BULLISH. ALIGNED BULLISH. Gold safe haven bid continues."
+    },
+    "DOGE": {
+      "price": 0.090915,
+      "dailyTrend": "bearish",
+      "h4Trend": "bearish",
+      "aligned": true,
+      "keyLevels": {
+        "resistance": [
+          0.093,
+          0.095
+        ],
+        "support": [
+          0.089,
+          0.087
+        ]
+      },
+      "reasoning": "D+4H: P<E20<E50, lower highs/lows. ALIGNED BEARISH."
+    },
+    "AVAX": {
+      "price": 8.797,
+      "dailyTrend": "bearish",
+      "h4Trend": "bearish",
+      "aligned": true,
+      "keyLevels": {
+        "resistance": [
+          9.0,
+          9.3
+        ],
+        "support": [
+          8.5,
+          8.2
+        ]
+      },
+      "reasoning": "D: 24.8\u219221.9\u219221.9\u219221.9\u219222.5\u21928.8. Collapsed. BEARISH. 4H: 23\u219222.8\u219222.3\u219220.5. BEARISH. NOW ALIGNED BEARISH (was not aligned before)."
+    },
+    "ARB": {
+      "price": 0.09729,
+      "dailyTrend": "bearish",
+      "h4Trend": "bearish",
+      "aligned": true,
+      "keyLevels": {
+        "resistance": [
+          0.1,
+          0.103
+        ],
+        "support": [
+          0.095,
+          0.092
+        ]
+      },
+      "reasoning": "D: 0.478\u21920.411\u21920.419\u21920.422\u21920.425\u21920.097. Collapsed. BEARISH. 4H: 0.434\u21920.421\u21920.391. BEARISH. NOW ALIGNED BEARISH."
+    },
+    "POL": {
+      "price": 0.105855,
+      "dailyTrend": "bearish",
+      "h4Trend": "bearish",
+      "aligned": true,
+      "keyLevels": {
+        "resistance": [
+          0.108,
+          0.11
+        ],
+        "support": [
+          0.103,
+          0.1
+        ]
+      },
+      "reasoning": "D: 0.296\u21920.267\u21920.272\u21920.274\u21920.277\u21920.106. Deep bearish. 4H: 0.283\u21920.278\u21920.260. BEARISH. ALIGNED BEARISH."
+    },
+    "AAVE": {
+      "price": 109.195,
+      "dailyTrend": "bearish",
+      "h4Trend": "bearish",
+      "aligned": true,
+      "keyLevels": {
+        "resistance": [
+          112,
+          115
+        ],
+        "support": [
+          107,
+          105
+        ]
+      },
+      "reasoning": "D: 247\u2192211\u2192205\u2192202\u2192204\u2192109. Steep decline. BEARISH. 4H: 206\u2192204\u2192201\u2192204\u2192187. BEARISH. ALIGNED BEARISH."
+    },
+    "WIF": {
+      "price": 0.195135,
+      "dailyTrend": "bearish",
+      "h4Trend": "bearish",
+      "aligned": true,
+      "keyLevels": {
+        "resistance": [
+          0.206,
+          0.21
+        ],
+        "support": [
+          0.19,
+          0.185
+        ]
+      },
+      "reasoning": "D: 0.658\u21920.556\u21920.550\u21920.579\u21920.585\u21920.195. Deep bearish. 4H: 0.595\u21920.577\u21920.585\u21920.557. BEARISH. ALIGNED BEARISH."
+    },
+    "PENDLE": {
+      "price": 1.22585,
+      "dailyTrend": "bearish",
+      "h4Trend": "bearish",
+      "aligned": true,
+      "keyLevels": {
+        "resistance": [
+          1.26,
+          1.3
+        ],
+        "support": [
+          1.2,
+          1.15
+        ]
+      },
+      "reasoning": "D: 3.41\u21922.94\u21922.89\u21922.75\u21922.94\u21921.23. Collapsed. BEARISH. 4H: 2.94\u21922.88\u21922.85\u21922.94\u21922.72. BEARISH. NOW ALIGNED BEARISH."
+    }
+  },
+  "sentimentHistory": [
+    {
+      "time": "2026-02-28T06:25:00Z",
+      "summary": "ALL 11 ALIGNED! 10 bearish (BTC/ETH/SOL/DOGE/AVAX/ARB/POL/AAVE/WIF/PENDLE), 1 bullish (PAXG). PAXG+WIF TP1 HIT \u2014 runners active at breakeven. DOGE short +11% ROE. Max positions, can't add. Broad crypto carnage, gold soaring."
+    },
+    {
+      "time": "2026-02-28T05:25:00Z",
+      "summary": "8 ALIGNED: PAXG bullish, BTC/ETH/SOL/DOGE/POL/AAVE/WIF bearish. 3 NOT ALIGNED: AVAX/ARB/PENDLE. 3 positions open (max): PAXG LONG (+$47 TP1 $7 away!), WIF SHORT (+$24.50), DOGE SHORT (+$1.48). BTC SHORT stopped out ~-$27. Total uPnL +$73.13."
+    }
+  ],
+  "scanFrequency": {
+    "currentTier": "30min",
+    "reason": "11/11 assets aligned + positions near TP",
+    "consecutiveNoAlignment": 0
+  },
+  "methodologyVersion": "2026-02-28-v2",
+  "rulesUpdated": "2026-02-28T07:05:00Z"
+}
